@@ -48,4 +48,31 @@ public class UserController extends BaseController {
         session.setAttribute("username",user.getUsername());
         return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
     }
+
+    /**
+     * 修改密码
+     * @param oldPassword 原密码
+     * @param newPassword 新密码
+     * @param session session对象
+     * @return 返回修改信息
+     */
+    @RequestMapping("/change_password")
+    public JsonResult<Void> changePassword(String oldPassword,
+                                           String newPassword,
+                                           HttpSession session
+                                           ){
+        Integer uid = getUidFromSession(session);
+        String username = getUsernameFromSession(session);
+        userService.changePassword(uid,username,oldPassword,newPassword);
+        return new JsonResult<>(Code.UPDATE_OK,"修改成功!");
+    }
+
+//    @RequestMapping("/clear_session")
+//    public void clearSession(HttpSession session){
+//        session.setAttribute("uid",null);
+//        session.setAttribute("username",null);
+//        session.invalidate();
+//        System.out.println(session);
+//    }
+
 }
