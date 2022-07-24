@@ -151,8 +151,10 @@
 					data: $("#form-reg").serialize(),
 					dataType: "JSON",
 					success: function (res){
-						if(res.state == 200){
+						if(res.state === 200){
 							alert(res.message);
+							//跳转到登陆页面
+							location.href = "login.html";
 						}else{
 							alert(res.message);
 						}

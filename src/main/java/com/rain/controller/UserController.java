@@ -17,10 +17,28 @@ public class UserController extends BaseController {
     @Autowired
     private IUserService userService;
 
+    /**
+     * 注册请求
+     * @param user
+     * @return
+     */
     @RequestMapping("/reg")
     public JsonResult<Void> reg(User user){
         //创建响应结果对象
         userService.reg(user);
         return new JsonResult<>(Code.REG_OK,"注册成功!");
+    }
+
+
+    /**
+     * 登陆请求
+     * @param username
+     * @param password
+     * @return
+     */
+    @RequestMapping("/login")
+    public JsonResult<User> login(String username,String password){
+        User user = userService.login(username, password);
+        return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
     }
 }

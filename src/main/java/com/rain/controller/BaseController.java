@@ -1,8 +1,6 @@
 package com.rain.controller;
 
-import com.rain.service.ex.InsertException;
-import com.rain.service.ex.ServiceException;
-import com.rain.service.ex.UsernameDuplicatedException;
+import com.rain.service.ex.*;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,7 +18,10 @@ public class BaseController {
             result.setState(Code.REG_FAIL);
         }else if(e instanceof InsertException){
             result.setState(Code.REG_ERROR);
-        }else{
+        }else if(e instanceof UserNotFoundException || e instanceof PasswordNotMatchException){
+            result.setState(Code.LOGIN_FAIL);
+        }
+        else{
             result.setState(500);
         }
         result.setMessage(e.getMessage());

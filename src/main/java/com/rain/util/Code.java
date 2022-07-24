@@ -22,4 +22,9 @@ public class Code {
     public static final Integer REG_FAIL = 201;
     //注册异常
     public static final Integer REG_ERROR = 202;
+
+    //登陆成功与失败
+    public static final Integer LOGIN_OK = 300;
+    public static final Integer LOGIN_FAIL = 301;
+
 }
