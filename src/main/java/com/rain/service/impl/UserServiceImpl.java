@@ -4,6 +4,7 @@ import com.rain.entity.User;
 import com.rain.mapper.UserMapper;
 import com.rain.service.IUserService;
 import com.rain.service.ex.InsertException;
+import com.rain.service.ex.UsernameDuplicatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements IUserService {
         //判断结果集是否为null,不是则抛出用户名被占用异常
         if(result!=null){
             //抛出异常
-            throw new UnsupportedOperationException("用户名被占用!");
+            throw new UsernameDuplicatedException("用户名已被注册!");
         }
 
         //密码加密处理
