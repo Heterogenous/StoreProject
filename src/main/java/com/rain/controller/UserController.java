@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/users")
 public class UserController extends BaseController {
@@ -37,8 +39,16 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping("/login")
-    public JsonResult<User> login(String username,String password){
+    public JsonResult<User> login(String username,
+                                  String password,
+                                  HttpSession session){
         User user = userService.login(username, password);
+        //将对象设置到session对象中
+        session.setAttribute("uid",user.getUid());
+        session.setAttribute("username",user.getUsername());
+        //测试获取到的session对象
+//        System.out.println(getUidFromSession(session));
+//        System.out.println(getUsernameFromSession(session));
         return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
     }
 }

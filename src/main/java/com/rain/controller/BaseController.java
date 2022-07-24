@@ -4,7 +4,8 @@ import com.rain.service.ex.*;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpSession;
 
 /** 控制层类的基类 **/
 public class BaseController {
@@ -26,5 +27,23 @@ public class BaseController {
         }
         result.setMessage(e.getMessage());
         return result;
+    }
+
+    /**
+     * 获取Session对象中的uid
+     * @param session
+     * @return
+     */
+    protected final Integer getUidFromSession(HttpSession session){
+       return Integer.valueOf(session.getAttribute("uid").toString());
+    }
+
+    /**
+     * 获取当前登陆用户的登录名
+     * @param session session对象
+     * @return 
+     */
+    protected final String getUsernameFromSession(HttpSession session){
+        return session.getAttribute("username").toString();
     }
 }
