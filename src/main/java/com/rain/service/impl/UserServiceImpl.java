@@ -3,10 +3,7 @@ package com.rain.service.impl;
 import com.rain.entity.User;
 import com.rain.mapper.UserMapper;
 import com.rain.service.IUserService;
-import com.rain.service.ex.InsertException;
-import com.rain.service.ex.PasswordNotMatchException;
-import com.rain.service.ex.UserNotFoundException;
-import com.rain.service.ex.UsernameDuplicatedException;
+import com.rain.service.ex.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -105,6 +102,38 @@ public class UserServiceImpl implements IUserService {
         user.setAvatar(result.getAvatar());
 
         return user;
+    }
+
+    /**
+     * 修改密码
+     * @param uid 修改的uid
+     * @param username 谁修改
+     * @param oldPassword 原密码
+     * @param newPassword 新密码
+     */
+    @Override
+    public void changePassword(Integer uid, String username, String oldPassword, String newPassword) {
+        User result = userMapper.findByUid(uid);
+        if(result == null || result.getIsDelete() == 1){
+            throw new UserNotFoundException("用户名不存在或已删除!");
+        }
+        //原始密码和数据库中的旧密码进行比较
+        String oldMd5Password = getMD5Password(oldPassword,result.getSalt());
+        if(!result.getPassword().equals(oldMd5Password)){
+            throw new PasswordNotMatchException("原密码错误!");
+        }
+        //将新的密码设置到数据库中
+        String newMd5Password = getMD5Password(newPassword,result.getSalt());
+        User user = new User();
+        user.setUid(uid);
+        user.setPassword(newMd5Password);
+        user.setModifiedUser(username);
+        user.setModifiedTime(new Date());
+        //调用DAO层
+        Integer rows = userMapper.updateByUser(user);
+        if(rows != 1){
+            throw new UpdateException("rows:"+rows+",更新数据产生未知的异常!");
+        }
     }
 
     /** 定义一个md5算法的加密处理 **/

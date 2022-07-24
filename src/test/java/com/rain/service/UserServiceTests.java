@@ -35,4 +35,11 @@ public class UserServiceTests {
         User user = iUserService.login("lily", "123456");
         System.out.println(user);
     }
+
+    @Test
+    public void testChangePassword(){
+        iUserService.changePassword(5,"lily","123456","1234");
+    }
+
+
 }

@@ -45,4 +45,49 @@
     <select id="findByUsername" resultMap="UserEntityMap">
         select <include refid="allColumn"/> from t_user where username = #{username}
     </select>
+
+    <!--
+         Integer updateByUser(User user);
+    -->
+    <update id="updateByUser">
+        update t_user
+        <set>
+            <if test="username != '' and username != null ">
+                username = #{username},
+            </if>
+            <if test="password != '' and password != null ">
+                password = #{password},
+            </if>
+            <if test="phone != '' and phone != null ">
+                phone = #{phone},
+            </if>
+            <if test="email != '' and email != null ">
+                email = #{email},
+            </if>
+            <if test="gender != null ">
+                gender = #{gender},
+            </if>
+            <if test="avatar != '' and avatar != null ">
+                avatar = #{avatar},
+            </if>
+            <if test="isDelete != null ">
+                is_delete = #{isDelete},
+            </if>
+            <if test="modifiedUser != '' and modifiedUser != null ">
+                modified_user = #{modifiedUser},
+            </if>
+            <if test="modifiedTime != null ">
+                modified_time = #{modifiedTime}
+            </if>
+        </set>
+        where uid = #{uid}
+    </update>
+
+
+    <!--
+         User findByUid(Integer id);
+    -->
+    <select id="findByUid" resultMap="UserEntityMap">
+        select <include refid="allColumn"/> from t_user where uid = #{uid}
+    </select>
 </mapper>
