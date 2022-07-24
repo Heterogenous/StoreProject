@@ -4,13 +4,14 @@ import com.rain.entity.User;
 import com.rain.mapper.UserMapper;
 import com.rain.service.IUserService;
 import com.rain.service.ex.InsertException;
+import com.rain.service.ex.PasswordNotMatchException;
+import com.rain.service.ex.UserNotFoundException;
 import com.rain.service.ex.UsernameDuplicatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.util.Date;
-import java.util.Locale;
 import java.util.UUID;
 
 /** 用户模块业务层的实现类 **/
@@ -20,6 +21,10 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * 用户注册的业务逻辑
+     * @param user 用户的数据对象
+     */
     @Override
     public void reg(User user) {
         //通过User获取Username
@@ -59,6 +64,47 @@ public class UserServiceImpl implements IUserService {
         if(rows != 1){
             throw new InsertException("在用户注册过程中产生了未知的异常!");
         }
+    }
+
+    /**
+     * 用户登陆的业务逻辑
+     * @param username 登录名
+     * @param password 密码
+     * @return 用户登陆信息对象,没有返回null
+     */
+    @Override
+    public User login(String username, String password) {
+        //根据登陆名来查询用户是否存在
+        User result = userMapper.findByUsername(username);
+        if(result == null){
+            throw new UserNotFoundException("用户名未注册!");
+        }
+        //判断该用户是否被删除
+        if(result.getIsDelete() == 1){
+            throw new UserNotFoundException("用户名已被删除!");
+        }
+
+        //检查密码是否匹配
+        //获取加密的密码
+        String encryptPassword = result.getPassword();
+
+        //对用户的密码进行相同加密操作后再进行比较
+        //获取盐值
+        String salt = result.getSalt();
+        //加密登陆密码
+        String newPassword = getMD5Password(password,salt);
+        //比较
+        if(!encryptPassword.equals(newPassword)){
+            throw new PasswordNotMatchException("密码错误!");
+        }
+
+        //返回对象必要的字段内容,用于提升性能
+        User user = new User();
+        user.setUid(result.getUid());
+        user.setUsername(result.getUsername());
+        user.setAvatar(result.getAvatar());
+
+        return user;
     }
 
     /** 定义一个md5算法的加密处理 **/

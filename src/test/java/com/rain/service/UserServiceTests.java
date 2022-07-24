@@ -29,4 +29,10 @@ public class UserServiceTests {
             System.out.println(e.getMessage());
         }
     }
+
+    @Test
+    public void testLogin(){
+        User user = iUserService.login("lily", "123456");
+        System.out.println(user);
+    }
 }
