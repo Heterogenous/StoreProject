@@ -17,6 +17,10 @@ public class InsertException extends ServiceException{
         super(cause);
     }
 
+    public InsertException(String message, Integer state) {
+        super(message, state);
+    }
+
     protected InsertException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }

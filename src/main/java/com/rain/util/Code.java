@@ -17,6 +17,9 @@ public class Code {
     public static final Integer PUT_OK = 50010;
     public static final Integer PUT_FAIL = 50011;
 
+    //系统异常
+    public static final Integer SYSTEM_ERROR = 60001;
+
     //注册成功与失败
     public static final Integer REG_OK = 200;
     public static final Integer REG_FAIL = 201;
@@ -27,4 +30,9 @@ public class Code {
     public static final Integer LOGIN_OK = 300;
     public static final Integer LOGIN_FAIL = 301;
 
+    //更新成功与失败
+    public static final Integer UPDATE_OK = 400;
+    public static final Integer UPDATE_FAIL = 401;
+    //更新异常
+    public static final Integer UPDATE_ERROR = 402;
 }

@@ -17,6 +17,10 @@ public class UpdateException extends ServiceException{
         super(cause);
     }
 
+    public UpdateException(String message, Integer state) {
+        super(message, state);
+    }
+
     protected UpdateException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }

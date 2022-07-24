@@ -17,6 +17,10 @@ public class PasswordNotMatchException extends ServiceException{
         super(cause);
     }
 
+    public PasswordNotMatchException(String message, Integer state) {
+        super(message, state);
+    }
+
     protected PasswordNotMatchException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }

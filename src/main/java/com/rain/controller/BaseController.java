@@ -16,14 +16,15 @@ public class BaseController {
     public JsonResult<Void> handleException(Throwable e){
         JsonResult<Void> result = new JsonResult<>(e);
         if(e instanceof UsernameDuplicatedException){
-            result.setState(Code.REG_FAIL);
+            result.setState(((UsernameDuplicatedException) e).getState());
         }else if(e instanceof InsertException){
-            result.setState(Code.REG_ERROR);
+            result.setState(((InsertException) e).getState());
         }else if(e instanceof UserNotFoundException || e instanceof PasswordNotMatchException){
-            result.setState(Code.LOGIN_FAIL);
-        }
-        else{
-            result.setState(500);
+            result.setState(((ServiceException) e).getState());
+        } else if (e instanceof UpdateException) {
+            result.setState(((UpdateException) e).getState());
+        } else{
+            result.setState(Code.SYSTEM_ERROR);
         }
         result.setMessage(e.getMessage());
         return result;

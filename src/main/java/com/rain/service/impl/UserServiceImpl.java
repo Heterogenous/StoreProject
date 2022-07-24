@@ -4,6 +4,7 @@ import com.rain.entity.User;
 import com.rain.mapper.UserMapper;
 import com.rain.service.IUserService;
 import com.rain.service.ex.*;
+import com.rain.util.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements IUserService {
         //判断结果集是否为null,不是则抛出用户名被占用异常
         if(result!=null){
             //抛出异常
-            throw new UsernameDuplicatedException("用户名已被注册!");
+            throw new UsernameDuplicatedException("用户名已被注册!", Code.REG_FAIL);
         }
 
         //密码加密处理
@@ -59,7 +60,7 @@ public class UserServiceImpl implements IUserService {
         //执行注册业务功能的实现
         Integer rows = userMapper.insert(user);
         if(rows != 1){
-            throw new InsertException("在用户注册过程中产生了未知的异常!");
+            throw new InsertException("在用户注册过程中产生了未知的异常!",Code.REG_ERROR);
         }
     }
 
@@ -74,11 +75,11 @@ public class UserServiceImpl implements IUserService {
         //根据登陆名来查询用户是否存在
         User result = userMapper.findByUsername(username);
         if(result == null){
-            throw new UserNotFoundException("用户名未注册!");
+            throw new UserNotFoundException("用户名未注册!",Code.LOGIN_FAIL);
         }
         //判断该用户是否被删除
         if(result.getIsDelete() == 1){
-            throw new UserNotFoundException("用户名已被删除!");
+            throw new UserNotFoundException("用户名已被删除!",Code.LOGIN_FAIL);
         }
 
         //检查密码是否匹配
@@ -92,7 +93,7 @@ public class UserServiceImpl implements IUserService {
         String newPassword = getMD5Password(password,salt);
         //比较
         if(!encryptPassword.equals(newPassword)){
-            throw new PasswordNotMatchException("密码错误!");
+            throw new PasswordNotMatchException("密码错误!",Code.LOGIN_FAIL);
         }
 
         //返回对象必要的字段内容,用于提升性能
@@ -115,12 +116,12 @@ public class UserServiceImpl implements IUserService {
     public void changePassword(Integer uid, String username, String oldPassword, String newPassword) {
         User result = userMapper.findByUid(uid);
         if(result == null || result.getIsDelete() == 1){
-            throw new UserNotFoundException("用户名不存在或已删除!");
+            throw new UserNotFoundException("用户名不存在或已删除!",Code.UPDATE_FAIL);
         }
         //原始密码和数据库中的旧密码进行比较
         String oldMd5Password = getMD5Password(oldPassword,result.getSalt());
         if(!result.getPassword().equals(oldMd5Password)){
-            throw new PasswordNotMatchException("原密码错误!");
+            throw new PasswordNotMatchException("原密码错误!",Code.UPDATE_FAIL);
         }
         //将新的密码设置到数据库中
         String newMd5Password = getMD5Password(newPassword,result.getSalt());
@@ -132,7 +133,7 @@ public class UserServiceImpl implements IUserService {
         //调用DAO层
         Integer rows = userMapper.updateByUser(user);
         if(rows != 1){
-            throw new UpdateException("rows:"+rows+",更新数据产生未知的异常!");
+            throw new UpdateException("rows:"+rows+",更新数据产生未知的异常!",Code.UPDATE_ERROR);
         }
     }
 

@@ -18,6 +18,10 @@ public class UsernameDuplicatedException extends ServiceException{
         super(cause);
     }
 
+    public UsernameDuplicatedException(String message, Integer state) {
+        super(message, state);
+    }
+
     protected UsernameDuplicatedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
