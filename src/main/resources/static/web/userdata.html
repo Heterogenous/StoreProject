@@ -314,12 +314,14 @@
 						dataType: "JSON",
 						success: function (data){
 							if(data.state === 400){
+								//成功修改将刷新表单数据
+								getInfo();
 								alert(data.message);
 							}else{
 								alert(data.message);
+								//重定向至登陆页面
+								location.href="login.html";
 							}
-							//无论是否成功修改都将刷新表单数据
-							getInfo();
 						},
 						error: function (xhr) {
 							alert(xhr.message+",状态码:"+xhr.status);

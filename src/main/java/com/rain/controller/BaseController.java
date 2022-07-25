@@ -1,5 +1,6 @@
 package com.rain.controller;
 
+import com.rain.controller.ex.*;
 import com.rain.service.ex.*;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
@@ -12,7 +13,7 @@ public class BaseController {
 
     //请求处理的方法，这个方法的返回值就是需要传递给全端的数据
     //自动将异常对象传递给此方法的参列表上
-    @ExceptionHandler(ServiceException.class)//用于统一处理抛出的异常
+    @ExceptionHandler({ServiceException.class,FileUploadException.class})//用于统一处理抛出的异常
     public JsonResult<Void> handleException(Throwable e){
         JsonResult<Void> result = new JsonResult<>(e);
         if(e instanceof UsernameDuplicatedException){
@@ -23,6 +24,16 @@ public class BaseController {
             result.setState(((ServiceException) e).getState());
         } else if (e instanceof UpdateException) {
             result.setState(((UpdateException) e).getState());
+        } else if (e instanceof FileEmptyException) {
+            result.setState(((FileEmptyException) e).getState());
+        } else if (e instanceof FileSizeException) {
+            result.setState(((FileSizeException) e).getState());
+        } else if (e instanceof FileTypeException) {
+            result.setState(((FileTypeException) e).getState());
+        } else if (e instanceof FileStateException) {
+            result.setState(((FileStateException) e).getState());
+        } else if (e instanceof FileUploadIOException) {
+            result.setState(((FileUploadIOException) e).getState());
         } else{
             result.setState(Code.SYSTEM_ERROR);
         }

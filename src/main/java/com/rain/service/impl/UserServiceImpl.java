@@ -162,6 +162,12 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
+    /**
+     * 修改个人信息
+     * @param uid 修改者uid,即当前登陆者
+     * @param username 修改者username
+     * @param user 被修改者的uid,username,phone,email,gender
+     */
     @Override
     public void changeInfo(Integer uid,String username,User user) {
         //先判断修改者的uid，是否为null,有可能因为session过期导致
@@ -186,6 +192,36 @@ public class UserServiceImpl implements IUserService {
             throw new UpdateException("修改失败!修改数据产生未知的异常",Code.UPDATE_ERROR);
         }
 
+
+    }
+
+    /**
+     * 个人头像的修改
+     * @param uid   被修改的uid
+     * @param username 修改者的username
+     * @param avatar   被修改的头像路径
+     */
+    @Override
+    public void changeAvatar(Integer uid, String username, String avatar) {
+        //查询当前的用户是否存在
+        User result = getByUid(uid);
+        //处理avatar
+
+
+
+        //将封装头像以及uid，username
+        User user = new User();
+        user.setUid(result.getUid());
+        user.setUsername(result.getUsername());
+        user.setAvatar(avatar);
+        user.setModifiedUser(username);
+        user.setModifiedTime(new Date());
+        //调用数据层修改数据库
+        Integer integer = userMapper.updateByUser(user);
+        //判断是否修改成功
+        if(integer != 1){
+            throw new UpdateException("修改失败!修改数据产生未知的异常",Code.UPDATE_ERROR);
+        }
 
     }
 

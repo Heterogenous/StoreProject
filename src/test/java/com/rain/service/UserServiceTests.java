@@ -60,4 +60,15 @@ public class UserServiceTests {
         user.setModifiedTime(new Date());
         iUserService.changeInfo(2,"tom",user);
     }
+
+    @Test
+    public void testAvatar(){
+//        User user = new User();
+//        user.setUid(6);
+//        user.setAvatar("/upload/test.png");
+//        user.setModifiedUser("管理员");
+//        user.setModifiedTime(new Date());
+        iUserService.changeAvatar(6,"管理员","/upload/test.png");
+
+    }
 }

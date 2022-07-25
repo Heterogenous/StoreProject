@@ -33,5 +33,4 @@ public interface UserMapper {
      * @return
      */
     User findByUid(Integer uid);
-
 }

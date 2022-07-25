@@ -8,7 +8,9 @@ import com.rain.util.Code;
 import com.rain.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 
@@ -100,6 +102,21 @@ public class UserController extends BaseController {
         //调用业务逻辑，将登录者信息以及被修改者信息传入
         userService.changeInfo(loginUid,loginUsername,user);
         return new JsonResult<>(Code.UPDATE_OK,"修改成功!");
+    }
+
+    /**
+     * MultipartFile接口是SpringMvc提供的一个接口，这个接口为我们包装了获取文件类型的数据
+     * 可以接收任何类型的file，Springboot整合了mvc,只需在处理请求的方法参数上声明一个类型为
+     * MultipartFile的参数，然后SpringBoot自动传递给服务的文件数据值赋值给这个参数
+     * @param session
+     * @param file
+     * @return
+     */
+    @RequestMapping("/change_avatar")
+    public JsonResult<String> changeAvatar(HttpSession session,
+                                           @RequestParam("file") MultipartFile file
+                                           ){
+        return null;
     }
 
 }
