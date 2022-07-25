@@ -1,5 +1,6 @@
 package com.rain.controller;
 
+import com.rain.controller.ex.*;
 import com.rain.entity.User;
 import com.rain.service.IUserService;
 import com.rain.service.ex.InsertException;
@@ -7,12 +8,18 @@ import com.rain.service.ex.UsernameDuplicatedException;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -104,6 +111,23 @@ public class UserController extends BaseController {
         return new JsonResult<>(Code.UPDATE_OK,"修改成功!");
     }
 
+
+//    @Value("${spring.servlet.multipart.max-file-size}")
+//    public String test;
+    //文件上传的最大值
+    public static final Integer AVATAR_MAX_SIZE = 2*1024*1024;
+    //限制上传文件的类型
+    public static final List<String> AVATAR_TYPE = new ArrayList<>();
+    {
+        AVATAR_TYPE.add("image/jpeg");
+        //AVATAR_TYPE.add("image/jpg");
+        AVATAR_TYPE.add("image/png");
+        AVATAR_TYPE.add("image/bmp");
+        AVATAR_TYPE.add("image/gif");
+    }
+    //文件上传路径
+    public static final String AVATAR_PATH = "/upload";
+
     /**
      * MultipartFile接口是SpringMvc提供的一个接口，这个接口为我们包装了获取文件类型的数据
      * 可以接收任何类型的file，Springboot整合了mvc,只需在处理请求的方法参数上声明一个类型为
@@ -115,8 +139,53 @@ public class UserController extends BaseController {
     @RequestMapping("/change_avatar")
     public JsonResult<String> changeAvatar(HttpSession session,
                                            @RequestParam("file") MultipartFile file
-                                           ){
-        return null;
+                                            ){
+        //判断文件是否为空
+        if (file.isEmpty()){
+            throw new FileEmptyException("图片不能为空!",Code.FILE_UPLOAD_EMPTY);
+        }
+        if(file.getSize() > AVATAR_MAX_SIZE){
+            throw new FileSizeException("图片超出 "+AVATAR_MAX_SIZE+"mb 限制!",Code.FILE_UPLOAD_SIZE);
+        }
+        //判断是否符合类型
+        String contentType = file.getContentType();
+        if(!AVATAR_TYPE.contains(contentType)){
+            throw new FileTypeException("图片类型不支持上传!",Code.FILE_UPLOAD_TYPE);
+        }
+        //上传的文件 ../upload/文件.png
+        String path = session.getServletContext().getRealPath(AVATAR_PATH);
+        //File对象指向这个路径，File是否存在，不存在则创建
+        File dir = new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();//创建当前目录
+        }
+        //获取文件的名称,使用UUID生成图片的文件名
+        String originalFilename = file.getOriginalFilename();
+        //测试
+//        System.out.println("----------------->"+originalFilename);
+//        System.out.println(test.lastIndexOf("m"));
+        int pointIndex = originalFilename.lastIndexOf(".");
+        String suffix = originalFilename.substring(pointIndex);
+        String filename = UUID.randomUUID().toString().toUpperCase() + suffix;
+        //目标文件,在dir文件下，创建filename文件名的文件
+        File dest = new File(dir,filename);
+        //将file写入到该文件中
+        try {
+            file.transferTo(dest);
+        }catch (FileStateException e){
+            throw new FileStateException("文件状态异常!",Code.FILE_UPLOAD_STATE);
+        } catch (IOException e) {
+            throw new FileUploadIOException("文件读写异常!",Code.FILE_UPLOAD_IO);
+        }
+
+        Integer uid = getUidFromSession(session);//被修改的uid
+        String username = getUsernameFromSession(session);//修改者的username
+        //返回头像路径
+        String avatar = AVATAR_PATH+"/"+ filename;
+        //调用业务逻辑
+        userService.changeAvatar(uid,username,avatar);
+        //返回用户头像路径给前端，用于头像展示使用
+        return new JsonResult<>(Code.UPDATE_OK,"头像修改成功!",avatar);
     }
 
 }

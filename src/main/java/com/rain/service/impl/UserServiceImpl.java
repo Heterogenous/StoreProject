@@ -205,10 +205,6 @@ public class UserServiceImpl implements IUserService {
     public void changeAvatar(Integer uid, String username, String avatar) {
         //查询当前的用户是否存在
         User result = getByUid(uid);
-        //处理avatar
-
-
-
         //将封装头像以及uid，username
         User user = new User();
         user.setUid(result.getUid());

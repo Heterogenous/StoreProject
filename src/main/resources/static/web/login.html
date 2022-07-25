@@ -153,6 +153,8 @@
 					success: function (res){
 						if(res.state === 300){
 							console.log(res.message);
+							//将头像设置到Cookie中
+							$.cookie("avatar",res.data.avatar,{expires:7});
 							//跳转到系统主页index.html
 							//相对路径来确定跳转的页面
 							location.href = "index.html";
