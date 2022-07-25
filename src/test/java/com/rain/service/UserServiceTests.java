@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Date;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class UserServiceTests {
@@ -41,5 +43,21 @@ public class UserServiceTests {
         iUserService.changePassword(5,"lily","123456","1234");
     }
 
+    @Test
+    public void testGetByUid(){
+        User user = iUserService.getByUid(6);
+        System.out.println(user);
+    }
 
+    @Test
+    public void testChangeInfo(){
+        User user = new User();
+        user.setUid(6);
+        user.setPhone("13719197549");
+        user.setEmail("1328763823@qq.com");
+        user.setGender(0);
+        user.setModifiedUser("root");
+        user.setModifiedTime(new Date());
+        iUserService.changeInfo(2,"tom",user);
+    }
 }

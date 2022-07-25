@@ -137,6 +137,59 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    /**
+     * 根据UId查询对象信息
+     * @param uid
+     * @return
+     */
+    @Override
+    public User getByUid(Integer uid) {
+        //根据用户的UID查询用户的信息
+        User result = userMapper.findByUid(uid);
+        //判断用户是否存在
+        if(result == null || result.getIsDelete() == 1){
+            System.out.println("不存在或已删除");
+            throw new UserNotFoundException("用户不存在或已被删除!",Code.UPDATE_FAIL);
+        }
+        //封装必要的数据
+        User user = new User();
+        user.setUid(result.getUid());
+        user.setUsername(result.getUsername());
+        user.setPhone(result.getPhone());
+        user.setEmail(result.getEmail());
+        user.setGender(result.getGender());
+
+        return user;
+    }
+
+    @Override
+    public void changeInfo(Integer uid,String username,User user) {
+        //先判断修改者的uid，是否为null,有可能因为session过期导致
+        if(uid == null){
+            throw new UpdateException("登陆过期，请重新登陆！",Code.UPDATE_FAIL);
+        }
+        //根据修改者的uid查询是否被删除,getByUid已处理
+        User loginUser = getByUid(uid);
+        //根据被修改者的信息查看是否被删除
+        User modifiedUser = getByUid(user.getUid());
+        //将被修改者信息存入到modifiedUser
+        modifiedUser.setPhone(user.getPhone());
+        modifiedUser.setEmail(user.getEmail());
+        modifiedUser.setGender(user.getGender());
+        //将修改者的username以及时间存入到modifiedUser中
+        modifiedUser.setModifiedUser(loginUser.getUsername());
+        modifiedUser.setModifiedTime(new Date());
+        //将被修改者放入到dao层,更新数据
+        Integer integer = userMapper.updateByUser(modifiedUser);
+        //判断是否修改成功
+        if(integer != 1){
+            throw new UpdateException("修改失败!修改数据产生未知的异常",Code.UPDATE_ERROR);
+        }
+
+
+    }
+
+
     /** 定义一个md5算法的加密处理 **/
     private String getMD5Password(String password,String salt){
         //MD5加密算法的方法调用
