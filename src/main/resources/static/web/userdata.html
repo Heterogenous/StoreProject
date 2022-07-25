@@ -141,13 +141,14 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label">用户名：</label>
 								<div class="col-md-8">
-									<input id="username" type="text" class="form-control" value="孙悟空" readonly="readonly">
+									<input id="username" name="username" type="text" class="form-control" placeholder="孙悟空" readonly="readonly">
+									<input id="uid" name="uid" type="hidden">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-2 control-label">电话号码：</label>
 								<div class="col-md-8">
-									<input `id="phone" name="phone" type="text" class="form-control" placeholder="请输入电话号码" value="13311311313">
+									<input id="phone" name="phone" type="text" class="form-control" placeholder="请输入电话号码" value="13311311313">
 								</div>
 							</div>
 							<div class="form-group">
@@ -262,6 +263,72 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			//初始化内容
+			$(document).ready(function (){
+				getInfo();
+			})
+			//获取信息函数
+			function getInfo() {
+				$.ajax({
+				url: "/users/get_by_uid",
+				type: "POST",
+				dataType: "JSON",
+				success: function (res){
+					//将获取到的数据刷新到表单上
+					if(res.state === 30010){
+						$("#uid").val(res.data.uid);
+						$("#username").val(res.data.username);
+						$("#phone").val(res.data.phone);
+						$("#email").val(res.data.email);
+						let radio = res.data.gender === 0?$("#gender-female"):$("#gender-male");
+						radio.prop("checked","checked");
+						// console.log(res);
+						// console.log(res.data.username);
+						// console.log(res.data.phone);
+						// console.log(res.data.email);
+					}else{
+						alert(res.message);
+					}
+				},
+				error: function (xhr){
+					alert(xhr.message+",状态码:"+xhr.status);
+				}
+			});
+			}
+
+
+			//当点击修改按钮时
+			$("#btn-change-info").click(function () {
+				//不允许有空字符串
+				let phone = $("#phone").val();
+				let email = $("#email").val();
+				if(phone === "" || email === "" ){
+					alert("修改的内容不能为空!");
+				}else{
+					//向服务器发送异步请求
+					$.ajax({
+						url: "/users/change_info",
+						type: "POST",
+						data: $("#form-change-info").serialize(),
+						dataType: "JSON",
+						success: function (data){
+							if(data.state === 400){
+								alert(data.message);
+							}else{
+								alert(data.message);
+							}
+							//无论是否成功修改都将刷新表单数据
+							getInfo();
+						},
+						error: function (xhr) {
+							alert(xhr.message+",状态码:"+xhr.status);
+						}
+					})
+				}
+
+			})
+		</script>
 	</body>
 
 </html>

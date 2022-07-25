@@ -75,4 +75,31 @@ public class UserController extends BaseController {
 //        System.out.println(session);
 //    }
 
+    /**
+     * 根据登陆信息，获取对象信息
+     * @param session 登陆信息
+     * @return 对应的信息
+     */
+    @RequestMapping("/get_by_uid")
+    public JsonResult<User> getByUid(HttpSession session){
+        User result = userService.getByUid(getUidFromSession(session));
+        return new JsonResult<>(Code.GET_OK,"获取对象成功!",result);
+    }
+
+    /**
+     * 修改用户信息,phone,email,gender
+     * @param user 被修改者的信息
+     * @param session 登录者信息
+     * @return 被修改者的状况
+     */
+    @RequestMapping("/change_info")
+    public JsonResult<Void> changeInfo(User user,HttpSession session){
+        //获取登录者的uid和username
+        Integer loginUid = getUidFromSession(session);
+        String loginUsername = getUsernameFromSession(session);
+        //调用业务逻辑，将登录者信息以及被修改者信息传入
+        userService.changeInfo(loginUid,loginUsername,user);
+        return new JsonResult<>(Code.UPDATE_OK,"修改成功!");
+    }
+
 }
