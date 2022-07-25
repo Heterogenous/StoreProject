@@ -9,6 +9,7 @@ import com.rain.util.Code;
 import com.rain.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -126,7 +127,7 @@ public class UserController extends BaseController {
         AVATAR_TYPE.add("image/gif");
     }
     //文件上传路径
-    public static final String AVATAR_PATH = "/upload";
+    public static final String AVATAR_PATH = "/upload/";
 
     /**
      * MultipartFile接口是SpringMvc提供的一个接口，这个接口为我们包装了获取文件类型的数据
@@ -153,7 +154,15 @@ public class UserController extends BaseController {
             throw new FileTypeException("图片类型不支持上传!",Code.FILE_UPLOAD_TYPE);
         }
         //上传的文件 ../upload/文件.png
-        String path = session.getServletContext().getRealPath(AVATAR_PATH);
+        //String path = session.getServletContext().getRealPath(AVATAR_PATH);
+
+
+        //获取jar包所在目录
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarFile = h.getSource();
+        //在jar包目录下生成一个上传图片保存的文件夹
+        String path = jarFile.getParentFile().toString() + AVATAR_PATH;
+
         //File对象指向这个路径，File是否存在，不存在则创建
         File dir = new File(path);
         if(!dir.exists()){
@@ -181,10 +190,12 @@ public class UserController extends BaseController {
         Integer uid = getUidFromSession(session);//被修改的uid
         String username = getUsernameFromSession(session);//修改者的username
         //返回头像路径
-        String avatar = AVATAR_PATH+"/"+ filename;
+        String avatar = AVATAR_PATH + filename;
         //调用业务逻辑
         userService.changeAvatar(uid,username,avatar);
         //返回用户头像路径给前端，用于头像展示使用
+        //拼接jar包所在路径
+        //avatar = path + filename;
         return new JsonResult<>(Code.UPDATE_OK,"头像修改成功!",avatar);
     }
 
