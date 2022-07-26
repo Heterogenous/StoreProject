@@ -108,6 +108,7 @@ public class UserController extends BaseController {
         Integer loginUid = getUidFromSession(session);
         String loginUsername = getUsernameFromSession(session);
         //调用业务逻辑，将登录者信息以及被修改者信息传入
+        //System.out.println("--------gender--------->"+user.getGender());
         userService.changeInfo(loginUid,loginUsername,user);
         return new JsonResult<>(Code.UPDATE_OK,"修改成功!");
     }

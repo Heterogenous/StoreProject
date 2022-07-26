@@ -281,8 +281,13 @@
 						$("#username").val(res.data.username);
 						$("#phone").val(res.data.phone);
 						$("#email").val(res.data.email);
-						let radio = res.data.gender === 0?$("#gender-female"):$("#gender-male");
-						radio.prop("checked","checked");
+						// let radio = res.data.gender === 0?$("#gender-female"):$("#gender-male");
+						// radio.prop("checked","checked");
+						if(res.data.gender === 0){
+							$("#gender-female").prop("checked","checked");
+						}else if(res.data.gender === 1){
+							$("#gender-male").prop("checked","checked");
+						}
 						// console.log(res);
 						// console.log(res.data.username);
 						// console.log(res.data.phone);
@@ -297,36 +302,55 @@
 			});
 			}
 
+			function postServerToUpdate(value){
+				//向服务器发送异步请求
+				$.ajax({
+					url: "/users/change_info",
+					type: "POST",
+					data: value,
+					dataType: "JSON",
+					success: function (data){
+						if(data.state === 400){
+							//成功修改将刷新表单数据
+							getInfo();
+							alert(data.message);
+						}else{
+							alert(data.message);
+							//重定向至登陆页面
+							location.href="login.html";
+						}
+					},
+					error: function (xhr) {
+						alert(xhr.message+",状态码:"+xhr.status);
+					}
+				})
+			}
 
 			//当点击修改按钮时
 			$("#btn-change-info").click(function () {
 				//不允许有空字符串
+				let uid = $("#uid").val();
 				let phone = $("#phone").val();
 				let email = $("#email").val();
-				if(phone === "" || email === "" ){
+				let gender = $("input:radio[name='gender']:checked").val();
+				//console.log(gender);
+				if(phone === "" && email === "" && gender !== "0" && gender !== "1" ){
 					alert("修改的内容不能为空!");
-				}else{
-					//向服务器发送异步请求
-					$.ajax({
-						url: "/users/change_info",
-						type: "POST",
-						data: $("#form-change-info").serialize(),
-						dataType: "JSON",
-						success: function (data){
-							if(data.state === 400){
-								//成功修改将刷新表单数据
-								getInfo();
-								alert(data.message);
-							}else{
-								alert(data.message);
-								//重定向至登陆页面
-								location.href="login.html";
-							}
-						},
-						error: function (xhr) {
-							alert(xhr.message+",状态码:"+xhr.status);
-						}
-					})
+				}else if(phone !== "" && email !== "" && (gender === "0" || gender === "1")){
+					postServerToUpdate("phone="+phone+"&email="+email+"&gender="+gender+"&uid="+uid);
+				}else if(phone !== "" && email !== ""){
+					postServerToUpdate("phone="+phone+"&email="+email+"&uid="+uid);
+				}else if(phone !== "" && (gender === "0" || gender === "1")){
+					postServerToUpdate("phone="+phone+"&gender="+gender+"&uid="+uid);
+				}else if(email !== "" && (gender === "0" || gender === "1")){
+					postServerToUpdate("gender="+gender+"&email="+email+"&uid="+uid);
+				}else if(phone !== ""){
+					postServerToUpdate("phone="+phone+"&uid="+uid);
+				}else if(email !== ""){
+					postServerToUpdate("email="+email+"&uid="+uid);
+				}else if(gender === "0" || gender === "1"){
+					//console.log(gender);
+					postServerToUpdate("gender="+gender+"&uid="+uid);
 				}
 
 			})

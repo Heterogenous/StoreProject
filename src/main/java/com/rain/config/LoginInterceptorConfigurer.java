@@ -19,10 +19,11 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
         //获取jar包所在目录
         ApplicationHome h = new ApplicationHome(getClass());
         File jarFile = h.getSource();
-        System.out.println(jarFile.getParentFile().toString());
+        //System.out.println(jarFile.getParentFile().toString());
         //在jar包目录下生成一个上传图片保存的文件夹
         String path = jarFile.getParentFile().toString() + "/upload/";
-        registry.addResourceHandler("/upload/**").addResourceLocations(path);
+        //映射到的路径前缀"file:"不能少
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:"+path);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
         patterns.add("/web/product.html");
         patterns.add("/users/reg");
         patterns.add("/users/login");
-        patterns.add("/upload/**");
+        //patterns.add("/upload/**");
 
 
         //完成拦截器的注册
