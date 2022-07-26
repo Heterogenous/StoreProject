@@ -26,4 +26,10 @@ public class AddressMapperTests {
         Integer insert = addressMapper.insert(address);
         System.out.println(insert);
     }
+
+    @Test
+    public void testCount(){
+        Integer integer = addressMapper.countByUid(6);
+        System.out.println("------------>"+integer);
+    }
 }

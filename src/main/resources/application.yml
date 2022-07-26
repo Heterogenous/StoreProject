@@ -12,3 +12,6 @@ spring:
 #定义mapper对应的xml文件的路径
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+#定义收货条数最大值
+address:
+  max-count: 20

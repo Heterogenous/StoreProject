@@ -26,7 +26,7 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
             //映射到的路径前缀"file:"不能少
             registry.addResourceHandler("/upload/**").addResourceLocations("file:" + path + "/upload/");
         }else {
-            System.out.println(jarFile);
+            System.out.println("jar包所在目录情况:"+jarFile);
         }
     }
 
