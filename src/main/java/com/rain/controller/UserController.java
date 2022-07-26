@@ -142,12 +142,13 @@ public class UserController extends BaseController {
     public JsonResult<String> changeAvatar(HttpSession session,
                                            @RequestParam("file") MultipartFile file
                                             ){
+        //System.out.println("----------------------->"+file.getSize());
         //判断文件是否为空
         if (file.isEmpty()){
             throw new FileEmptyException("图片不能为空!",Code.FILE_UPLOAD_EMPTY);
         }
         if(file.getSize() > AVATAR_MAX_SIZE){
-            throw new FileSizeException("图片超出 "+AVATAR_MAX_SIZE+"mb 限制!",Code.FILE_UPLOAD_SIZE);
+            throw new FileSizeException("图片超出 "+(AVATAR_MAX_SIZE/1024/1024)+"mb 限制!请重新上传!",Code.FILE_UPLOAD_SIZE);
         }
         //判断是否符合类型
         String contentType = file.getContentType();

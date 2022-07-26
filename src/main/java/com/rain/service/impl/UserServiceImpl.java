@@ -178,18 +178,24 @@ public class UserServiceImpl implements IUserService {
         User loginUser = getByUid(uid);
         //根据被修改者的信息查看是否被删除
         User modifiedUser = getByUid(user.getUid());
-        //将被修改者信息存入到modifiedUser
-        modifiedUser.setPhone(user.getPhone());
-        modifiedUser.setEmail(user.getEmail());
-        modifiedUser.setGender(user.getGender());
-        //将修改者的username以及时间存入到modifiedUser中
-        modifiedUser.setModifiedUser(loginUser.getUsername());
-        modifiedUser.setModifiedTime(new Date());
-        //将被修改者放入到dao层,更新数据
-        Integer integer = userMapper.updateByUser(modifiedUser);
-        //判断是否修改成功
-        if(integer != 1){
-            throw new UpdateException("修改失败!修改数据产生未知的异常",Code.UPDATE_ERROR);
+        //检查是否有修改
+        if(modifiedUser.getGender() == user.getGender() && modifiedUser.getPhone().equals(user.getPhone())  && modifiedUser.getEmail().equals(user.getEmail())){
+            //若没有修改直接返回
+            System.out.println("信息没有修改!");
+        }else{
+            //将被修改者信息存入到modifiedUser
+            modifiedUser.setPhone(user.getPhone());
+            modifiedUser.setEmail(user.getEmail());
+            modifiedUser.setGender(user.getGender());
+            //将修改者的username以及时间存入到modifiedUser中
+            modifiedUser.setModifiedUser(loginUser.getUsername());
+            modifiedUser.setModifiedTime(new Date());
+            //将被修改者放入到dao层,更新数据
+            Integer integer = userMapper.updateByUser(modifiedUser);
+            //判断是否修改成功
+            if(integer != 1){
+                throw new UpdateException("修改失败!修改数据产生未知的异常",Code.UPDATE_ERROR);
+            }
         }
 
 
