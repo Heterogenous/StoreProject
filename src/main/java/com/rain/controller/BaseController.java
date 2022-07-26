@@ -34,6 +34,8 @@ public class BaseController {
             result.setState(((FileStateException) e).getState());
         } else if (e instanceof FileUploadIOException) {
             result.setState(((FileUploadIOException) e).getState());
+        } else if (e instanceof AddressCountLimitException) {
+            result.setState(((AddressCountLimitException) e).getState());
         } else{
             result.setState(Code.SYSTEM_ERROR);
         }

@@ -34,8 +34,21 @@
     </sql>
     <insert id="insert" useGeneratedKeys="true" keyProperty="aid">
         insert into t_address(<include refid="noAid"></include>) values (
-            #{uid},#{name},#{provinceName},#{provinceCode},#{cityName},#{cityCode},#{areaName},#{areaCode},#{zip},#{address},
-            #{phone},#{tel},#{tag},#{isDefault},#{createdUser},#{createdTime},#{modifiedUser},#{modifiedTime}
+            #{uid},#{name},#{provinceName},#{provinceCode},#{cityName},#{cityCode},#{areaName},#{areaCode},
+            <choose>
+              <when test="zip == '' || zip == null">null</when>
+              <otherwise>#{zip}</otherwise>
+            </choose>,
+            #{address},#{phone},
+            <choose>
+                <when test="tel == '' || tel == null">null</when>
+                <otherwise>#{tel}</otherwise>
+            </choose>,
+            <choose>
+                <when test="tag == '' || tag == null">null</when>
+                <otherwise>#{tag}</otherwise>
+            </choose>,
+            #{isDefault},#{createdUser},#{createdTime},#{modifiedUser},#{modifiedTime}
         )
     </insert>
 

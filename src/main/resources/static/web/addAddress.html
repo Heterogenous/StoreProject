@@ -143,7 +143,7 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label"><span class="txtred">*</span>收货人：</label>
 								<div class="col-md-8">
-									<input name="name" type="text" class="form-control" placeholder="请输入收货人姓名">
+									<input id="name" name="name" type="text" class="form-control" placeholder="请输入收货人姓名">
 								</div>
 							</div>
 							<div class="address_content" data-toggle="distpicker">
@@ -171,13 +171,13 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label"><span class="txtred">*</span>详细地址：</label>
 								<div class="col-md-8">
-									<textarea name="address" class="form-control" rows="3" placeholder="输入详细的收货地址，小区名称、门牌号等"></textarea>
+									<textarea id="address" name="address" class="form-control" rows="3" placeholder="输入详细的收货地址，小区名称、门牌号等"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-2 control-label"><span class="txtred">*</span>手机：</label>
 								<div class="col-md-3">
-									<input name="phone" type="text" class="form-control" placeholder="请输入手机号码">
+									<input id="phone" name="phone" type="text" class="form-control" placeholder="请输入手机号码">
 								</div>
 								<label class="col-md-2 control-label">固话：</label>
 								<div class="col-md-3">
@@ -287,6 +287,41 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			$("#btn-add-new-address").click(function () {
+				//必填选项不能为空
+				let name = $("#name").val();
+				let province = $("#province-list").val();
+				let city = $("#city-list").val();
+				let area = $("#area-list").val();
+				let address = $("#address").val();
+				let phone = $("#phone").val();
+				if(name === "" || province === "" || city === "" || area === "" || address === "" || phone === ""){
+					alert("必选项不能为空!");
+				}else {
+					//请求数据
+					$.ajax({
+						url: "/addresses/add_new_address",
+						type: "POST",
+						data: $("#form-add-new-address").serialize(),
+						dataType: "JSON",
+						success: function (res) {
+							if(res.state === 400){
+								alert(res.message);
+								//重定向页面
+								location.href="address.html";
+							}else {
+								alert(res.message);
+							}
+
+						},
+						error: function (xhr){
+							alert(xhr.message+",状态码："+xhr.status);
+						}
+					})
+				}
+			})
+		</script>
 	</body>
 
 </html>

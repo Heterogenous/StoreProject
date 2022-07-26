@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rain.mapper.DistrictMapper">
+    <sql id="allColumn">
+        id,parent,code,name
+    </sql>
+    <sql id="noId">
+        parent,code,name
+    </sql>
+    <!--
+        List<District> findByParent(String parent);
+    -->
+    <select id="findByParent" resultType="com.rain.entity.District">
+        select <include refid="allColumn"/> from t_dict_district where parent = #{parent} order by code ASC
+    </select>
+</mapper>
