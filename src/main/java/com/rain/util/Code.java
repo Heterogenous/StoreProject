@@ -52,4 +52,8 @@ public class Code {
     //查询异常
     public static final Integer SELECT_ERROR = 502;
 
+    //删除成功异常
+    public static final Integer DEL_OK = 600;
+    public static final Integer DEL_ERROR = 602;
+
 }

@@ -33,4 +33,18 @@ public class AddressController extends BaseController{
         List<Address> data = addressService.getByUid(uid);
         return new JsonResult<>(Code.SELECT_OK,"获取收货地址列表成功!",data);
     }
+
+    @RequestMapping("/update_address_to_default")
+    public JsonResult<Void> updateAddressToDefault(HttpSession session,Integer aid){
+        Integer uid = getUidFromSession(session);
+        String username = getUsernameFromSession(session);
+        addressService.setAddressToDefaultByAid(uid,username,aid);
+        return new JsonResult<>(Code.UPDATE_OK,"成功设置为默认地址!");
+    }
+
+    @RequestMapping("/delete")
+    public JsonResult<Void> deleteAddressByAid(Integer aid,Integer nextAid){
+        addressService.deleteAddressByAid(aid,nextAid);
+        return new JsonResult<>(Code.DEL_OK,"删除成功!");
+    }
 }

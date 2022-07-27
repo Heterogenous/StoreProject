@@ -276,6 +276,7 @@
 			})
 			//展示收货地址列表函数
 			function showAddressList() {
+				$("#address-list").empty();
 				$.ajax({
 					url: "/addresses",
 					type: "GET",
@@ -300,16 +301,26 @@
 										'<td>#{name}</td>' +
 										'<td>#{address}</td>' +
 										'<td>#{phone}</td>' +
-										'<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>' +
-										'<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>' +
-										'<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>';
+										'<td><a class="btn btn-xs btn-info" onclick="updateAddress(#{aid})"><span class="fa fa-edit"></span> 修改</a></td>' +
+										'<td><a class="btn btn-xs add-del btn-info" onclick="deleteAddress(#{aid},#{nextAid})"><span class="fa fa-trash-o"></span> 删除</a></td>' +
+										'<td><a class="btn btn-xs add-def btn-default" onclick="setAddressToDefault(#{aid})">设为默认</a></td>';
 								td = td.replace(/#{tag}/g,(list[i].tag === null || list[i].tag === ""?"无":list[i].tag));
 								td = td.replace(/#{name}/g,list[i].name);
 								td = td.replace(/#{address}/g,(list[i].provinceName + list[i].cityName + list[i].areaName +list[i].address));
 								td = td.replace(/#{phone}/g,list[i].phone);
+								td = td.replace(/#{aid}/g,list[i].aid);
+								if(list[i].isDefault === 1 && i+1 < list.length){
+									//只有是当前为默认地址，且还能获取到下一个aid的才赋值，否则下一个nextAid赋值为-1
+									//当使前提条件i===0时有一个隐患，就是分页的时候会有问题（可考虑根据isDefault来判断，下同）
+									td = td.replace(/#{nextAid}/g,list[i+1].aid);
+									//console.log("没进来!");
+								}else{
+									td = td.replace(/#{nextAid}/g,'-1');
+									//console.log("--->"+(list[i].isDefault === 1));
+								}
 								$("#address-list").append("<tr>"+td+"</tr>");
 							}
-							//第0个元素隐藏
+							//第0个元素隐藏,隐藏问题:当分页的时候会出现每页的第一个都会隐藏
 							$(".add-def:eq(0)").hide();
 						}else{
 							alert("查询收货地址失败!");
@@ -319,6 +330,67 @@
 						alert(xhr.message+",状态码:"+xhr.status);
 					}
 				})
+			}
+			//设置为默认按钮的点击事件
+			function setAddressToDefault(aid) {
+				//alert("你点击我啦！Aid:"+aid);
+				//向服务器请求设置为默认
+				$.ajax({
+					url: "/addresses/update_address_to_default",
+					type: "POST",
+					data: "aid="+aid,
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 400){
+							console.log(res.message);
+							//网页重定向
+							//location.href="address.html";
+							//刷新列表
+							showAddressList();
+						}else {
+							alert(res.message);
+						}
+
+					},
+					error: function (xhr){
+						alert(xhr.message+",状态码:"+xhr.status);
+					}
+				})
+			}
+			//设置修改按钮的点击事件
+			function updateAddress(aid) {
+
+			}
+			//设置删除按钮的点击事件
+			function deleteAddress(aid,nextAid) {
+				//alert("aid="+aid+",nextAid="+nextAid);
+				//询问是否删除
+				if(confirm("是否删除该条收货地址？")){
+					//console.log("删除");
+					//向服务器发送请求删除业务
+					$.ajax({
+						url: "/addresses/delete",
+						type: "POST",
+						data: "aid="+aid+"&nextAid="+nextAid,
+						dataType: "JSON",
+						success: function (res) {
+							if(res.state === 600){
+								alert(res.message);
+								//刷新列表
+								showAddressList();
+							}else{
+								alert(res.message+"自定义状态码:"+res.state);
+							}
+
+						},
+						error: function (xhr){
+							alert(xhr.message+",系统状态码:"+xhr.status);
+						}
+					})
+				}else{
+					console.log("取消");
+				}
+
 			}
 		</script>
 	</body>

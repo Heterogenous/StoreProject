@@ -4,7 +4,9 @@ import com.rain.entity.Address;
 import com.rain.mapper.AddressMapper;
 import com.rain.service.IAddressService;
 import com.rain.service.ex.AddressCountLimitException;
+import com.rain.service.ex.DeleteException;
 import com.rain.service.ex.InsertException;
+import com.rain.service.ex.UpdateException;
 import com.rain.util.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,4 +85,63 @@ public class AddressServiceImpl implements IAddressService {
         }
         return list;
     }
+
+    /**
+     * 修改用户的某条收货地址为默认值
+     * @param uid 修改用户的uid
+     * @param username 修改用户的username
+     * @param aid 用户的收货地址的aid
+     */
+    @Override
+    public void setAddressToDefaultByAid(Integer uid, String username, Integer aid) {
+        //修改该用户所有收货地址的默认值为0
+        Address updateDefaultToZero = new Address();
+        updateDefaultToZero.setUid(uid);
+        updateDefaultToZero.setModifiedUser(username);
+        updateDefaultToZero.setModifiedTime(new Date());
+        Integer rows = addressMapper.updateIsDefaultToZero(updateDefaultToZero);
+        if(rows < 1){
+            throw new UpdateException("修改所有收货地址为默认值为非默认异常!",Code.UPDATE_ERROR);
+        }
+        //根据aid修改用户该条收货地址为默认
+        Address updateDefault = new Address();
+        updateDefault.setAid(aid);
+        updateDefault.setIsDefault(1);
+        updateDefault.setModifiedTime(new Date());
+        updateDefault.setModifiedUser(username);
+        Integer integer = addressMapper.updateAddress(updateDefault);
+        if(integer != 1 ){
+            throw new UpdateException("修改收货地址为默认异常!",Code.UPDATE_ERROR);
+        }
+    }
+
+    /**
+     * 根据收货地址的aid删除收货地址，并且将下一个收货地址修改为默认地址
+     * @param aid 即将被删除的收货地址的aid
+     * @param nextAid 即将被修改为默认收货地址的aid
+     */
+    @Override
+    public void deleteAddressByAid(Integer aid, Integer nextAid) {
+        //删除当前收货地址
+        Integer rows = addressMapper.deleteAddress(aid);
+        //System.out.println("删除的条数:--------->"+rows);
+        if(rows != 1){
+            throw new DeleteException("收货地址删除异常!",Code.DEL_ERROR);
+        }
+
+        //先判断nextAid不等于-1，即执行将下一个收货地址设置为默认
+        if(nextAid != -1){
+            Address updateDefault = new Address();
+            updateDefault.setAid(nextAid);
+            updateDefault.setIsDefault(1);
+            updateDefault.setModifiedUser("系统自动设置");
+            updateDefault.setModifiedTime(new Date());
+            Integer integer = addressMapper.updateAddress(updateDefault);
+            if(integer != 1){
+                throw new UpdateException("设置收货地址为默认异常",Code.UPDATE_ERROR);
+            }
+        }
+    }
+
+
 }

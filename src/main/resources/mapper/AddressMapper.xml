@@ -64,4 +64,77 @@
     <select id="findByUid" resultMap="addressEntityMap">
         select <include refid="allColumn"/> from t_address where uid = #{uid} order by is_default DESC,created_time DESC
     </select>
+    <!--
+        Address findByAid(Integer aid);
+    -->
+    <select id="findByAid" resultMap="addressEntityMap">
+        select <include refid="allColumn"/> from t_address where aid = #{aid}
+    </select>
+
+    <!--
+        Integer updateIsDefaultToZero(Address address);
+    -->
+    <update id="updateIsDefaultToZero">
+        update t_address set is_default = 0,modified_user = #{modifiedUser},modified_time = #{modifiedTime} where uid = #{uid}
+    </update>
+    <!--
+        Integer updateAddressByAid(Address address);
+    -->
+    <update id="updateAddress" parameterType="com.rain.entity.Address">
+        update t_address
+        <set>
+            <if test="name != '' and name != null">
+                name = #{name},
+            </if>
+            <if test="provinceName != '' and provinceName != null">
+                province_name = #{provinceName},
+            </if>
+            <if test="provinceCode != '' and provinceCode != null">
+                province_code = #{provinceCode},
+            </if>
+            <if test="cityName != '' and cityName != null">
+                city_name = #{cityName},
+            </if>
+            <if test="cityCode != '' and cityCode != null">
+                city_code = #{cityCode},
+            </if>
+            <if test="areaName != '' and areaName != null">
+                area_name = #{areaName},
+            </if>
+            <if test="areaCode != '' and areaCode != null">
+                area_code = #{areaCode},
+            </if>
+            <if test="zip != '' and zip != null">
+                zip = #{zip},
+            </if>
+            <if test="address != '' and address != null">
+                address = #{address},
+            </if>
+            <if test="phone != '' and phone != null">
+                phone = #{phone},
+            </if>
+            <if test="tel != '' and tel != null">
+                tel = #{tel},
+            </if>
+            <if test="tag != '' and tag != null">
+                tag = #{tag},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+            <if test="modifiedUser != '' and modifiedUser != null">
+                modified_user = #{modifiedUser},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime},
+            </if>
+        </set>
+        where aid = #{aid}
+    </update>
+    <!--
+        Integer deleteAddress(Integer aid);
+    -->
+    <delete id="deleteAddress">
+        delete from t_address where aid = #{aid};
+    </delete>
 </mapper>

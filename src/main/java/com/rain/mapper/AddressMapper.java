@@ -26,4 +26,32 @@ public interface AddressMapper {
      * @return 收货地址对象列表
      */
     List<Address> findByUid(Integer uid);
+
+    /**
+     * 根据地址对象的aid查询收货地址
+     * @param aid 地址对象的aid
+     * @return 对应的地址对象
+     */
+    Address findByAid(Integer aid);
+
+    /**
+     * 根据用户的uid修改相应的收货地址，其中的默认值全为0
+     * @param address
+     * @return
+     */
+    Integer updateIsDefaultToZero(Address address);
+
+    /**
+     * 根据收货地址的aid修改Address信息
+     * @param address
+     * @return
+     */
+    Integer updateAddress(Address address);
+
+    /**
+     * 根据收货地址aid删除对象
+     * @param aid 收货地址的唯一aid
+     * @return 受影响的行数
+     */
+    Integer deleteAddress(Integer aid);
 }

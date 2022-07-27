@@ -31,4 +31,9 @@ public class AddressServiceTests {
         address.setModifiedTime(date);
         addressService.addNewAddress(6,"lily11",address);
     }
+
+    @Test
+    public void deleteAddress(){
+        addressService.deleteAddressByAid(11,10);
+    }
 }

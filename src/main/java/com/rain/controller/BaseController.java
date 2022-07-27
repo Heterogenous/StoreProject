@@ -38,6 +38,8 @@ public class BaseController {
             result.setState(((AddressCountLimitException) e).getState());
         } else if (e instanceof DistrictNotFoundException) {
             result.setState(((DistrictNotFoundException) e).getState());
+        } else if(e instanceof DeleteException){
+            result.setState(((DeleteException) e).getState());
         } else{
             result.setState(Code.SYSTEM_ERROR);
         }
