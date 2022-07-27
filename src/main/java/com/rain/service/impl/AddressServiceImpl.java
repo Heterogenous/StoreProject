@@ -15,7 +15,10 @@ import java.util.Date;
 @Service
 public class AddressServiceImpl implements IAddressService {
     @Autowired
-    private AddressMapper addressMapper;
+    private AddressMapper addressMapper;//收货地址业务接口
+
+    @Autowired
+    private DistrictServiceImpl districtService;//省市区列表业务接口
 
     @Value("${address.max-count}")
     private Integer MAX_ADDRESS_COUNT ;
@@ -35,9 +38,16 @@ public class AddressServiceImpl implements IAddressService {
         if(count > MAX_ADDRESS_COUNT){
             throw new AddressCountLimitException("收货地址已达上限!", Code.UPDATE_FAIL);
         }
+        //将所缺数据设置到address对象中
+        //省市区,从前端获取省市区的code,再调用省市区表获取对应的名称
+        address.setProvinceName(districtService.getNameByCode(address.getProvinceCode()));//省
+        address.setCityName(districtService.getNameByCode(address.getCityCode()));//市
+        address.setAreaName(districtService.getNameByCode(address.getAreaCode()));//区
+        //uid,是否设置为默认
         address.setUid(uid);
         Integer isDefault = count == 0 ? 1 : 0;
         address.setIsDefault(isDefault);
+        //日志
         address.setCreatedUser(username);
         address.setModifiedUser(username);
         Date date = new Date();

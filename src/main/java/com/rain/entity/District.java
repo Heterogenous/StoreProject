@@ -1,9 +1,10 @@
 package com.rain.entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /** 省市区实体类 **/
-public class District extends BaseEntity{
+public class District implements Serializable {
     private Integer id;
     private String parent;
     private String code;

@@ -12,4 +12,11 @@ public interface DistrictMapper {
      * @return 某个父区域下的所有区域列表
      */
     List<District> findByParent(String parent);
+
+    /**
+     * 根据区域代码查询对应名称
+     * @param code 区域代码
+     * @return 对应名称
+     */
+    String findNameByCode(String code);
 }

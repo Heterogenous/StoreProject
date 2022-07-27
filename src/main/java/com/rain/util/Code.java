@@ -46,4 +46,10 @@ public class Code {
     //更新异常
     public static final Integer UPDATE_ERROR = 402;
 
+    //查询成功与失败
+    public static final Integer SELECT_OK = 500;
+    public static final Integer SELECT_FAIL = 501;
+    //查询异常
+    public static final Integer SELECT_ERROR = 502;
+
 }

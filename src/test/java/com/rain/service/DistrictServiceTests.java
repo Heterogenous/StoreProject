@@ -1,4 +1,4 @@
-package com.rain.mapper;
+package com.rain.service;
 
 import com.rain.entity.District;
 import org.junit.Test;
@@ -11,19 +11,13 @@ import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class DistrictMapperTests {
+public class DistrictServiceTests {
     @Autowired
-    private DistrictMapper districtMapper;
+    private IDistrictService districtService;
 
     @Test
-    public void getByParent(){
-        List<District> list = districtMapper.findByParent("86");
+    public void testList(){
+        List<District> list = districtService.getByParent("86");
         list.forEach(System.out::println);
-    }
-
-    @Test
-    public void getNameByCode(){
-        String name = districtMapper.findNameByCode("440980");
-        System.out.println(name);
     }
 }

@@ -8,10 +8,19 @@
     <sql id="noId">
         parent,code,name
     </sql>
+    <sql id="tableName">
+        t_dict_district
+    </sql>
     <!--
         List<District> findByParent(String parent);
     -->
     <select id="findByParent" resultType="com.rain.entity.District">
         select <include refid="allColumn"/> from t_dict_district where parent = #{parent} order by code ASC
+    </select>
+    <!--
+        String findNameByCode(String code);
+    -->
+    <select id="findNameByCode" parameterType="string" resultType="string">
+        select name from <include refid="tableName"/> where code = #{code}
     </select>
 </mapper>
