@@ -292,11 +292,84 @@
 			//let defaultOption = "<option value='0'>---- 请选择 ----</option>"
 			//初始化
 			$(document).ready(function () {
-				showProvinceList();
 				$("#province-list").append("<option value='0'>---- 选择省/直辖市 ----</option>")
 				$("#city-list").append("<option value='0'>---- 选择城市 ----</option>");
 				$("#area-list").append("<option value='0'>---- 请选区县 ----</option>");
+				showProvinceList();
 			});
+
+			/**
+			 * change()函数用于监听某个控件是否发生改变，一旦发生改变就会触发参数的函数
+			 */
+			//监听省列表，为市列表充值
+			$("#province-list").change(function () {
+				//先获取父区域代码
+				let provinceCode = $("#province-list").val();
+				if(provinceCode !== "0"){
+					//清空select下拉列表中所有option的选项
+					$("#city-list").empty();
+					$("#area-list").empty();
+					//填充默认值
+					$("#city-list").append("<option value='0'>---- 选择城市 ----</option>");
+					$("#area-list").append("<option value='0'>---- 请选区县 ----</option>");
+					//向服务器发送ajax请求
+					$.ajax({
+						url: "/districts",
+						type: "POST",
+						data: "parent="+provinceCode,
+						dataType: "JSON",
+						success: function (res) {
+							if(res.state === 500){
+								let list = res.data;
+								for (let i = 0;i<list.length;i++){
+									$("#city-list").append("<option value='"+list[i].code+"'>"+list[i].name+"</option>");
+								}
+							}else{
+								alert("市:"+res.message);
+							}
+						},
+						error: function (xhr) {
+							alert(xhr.message+",状态码："+xhr.status);
+						}
+					})
+				}
+
+			})
+
+			//监听市列表，为区列表充值
+			$("#city-list").change(function () {
+				//获取市列表的code
+				let cityCode = $("#city-list").val();
+				//清空区列表
+				$("#area-list").empty();
+				//填充默认值
+				$("#area-list").append("<option value='0'>---- 请选区县 ----</option>");
+				if(cityCode !== "0"){
+					//向服务器发起请求
+					$.ajax({
+						url: "/districts",
+						type: "POST",
+						data: "parent="+cityCode,
+						dataType: "JSON",
+						success: function (res) {
+							if(res.state === 500){
+								let list = res.data;
+								for (let i = 0; i < list.length; i++) {
+									$("#area-list").append("<option value='"+list[i].code+"'>"+list[i].name+"</option>");
+								}
+							}else{
+								alert("区:"+res.message);
+							}
+
+
+						},
+						error: function (xhr) {
+							alert(xhr.message+",状态码:"+xhr.status);
+						}
+					})
+				}
+			})
+
 			//省列表函数
 			function showProvinceList() {
 				$.ajax({
