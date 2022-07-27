@@ -2,6 +2,8 @@ package com.rain.service;
 
 import com.rain.entity.Address;
 
+import java.util.List;
+
 /** 收货地址业务层接口 **/
 public interface IAddressService {
     /**
@@ -12,4 +14,12 @@ public interface IAddressService {
      * @return 受影响的行数
      */
     void addNewAddress(Integer uid, String username, Address address);
+
+    /**
+     * 根据用户的uid查询用户的收货地址信息
+     * @param uid 用户的uid
+     * @return 收货地址对象列表
+     */
+    List<Address> getByUid(Integer uid);
+
 }

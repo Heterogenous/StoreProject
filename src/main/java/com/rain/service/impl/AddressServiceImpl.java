@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AddressServiceImpl implements IAddressService {
@@ -58,5 +59,28 @@ public class AddressServiceImpl implements IAddressService {
         if(result != 1){
             throw new InsertException("添加失败!",Code.UPDATE_FAIL);
         }
+    }
+
+
+    /**
+     * 根据用户的uid查询收货地址列表
+     * @param uid 用户的uid
+     * @return 收货地址列表
+     */
+    @Override
+    public List<Address> getByUid(Integer uid) {
+        List<Address> list = addressMapper.findByUid(uid);
+        //将不需要的值设置为空
+        for(Address address : list){
+            address.setProvinceCode(null);
+            address.setCityCode(null);
+            address.setAreaCode(null);
+            address.setTel(null);
+            address.setCreatedUser(null);
+            address.setCreatedTime(null);
+            address.setModifiedTime(null);
+            address.setModifiedUser(null);
+        }
+        return list;
     }
 }

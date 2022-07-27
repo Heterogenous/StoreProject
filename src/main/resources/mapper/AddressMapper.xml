@@ -58,4 +58,10 @@
     <select id="countByUid" resultType="int">
         select count(aid) from t_address where uid = #{uid}
     </select>
+    <!--
+        List<Address> findByUid(Integer uid);
+    -->
+    <select id="findByUid" resultMap="addressEntityMap">
+        select <include refid="allColumn"/> from t_address where uid = #{uid} order by is_default DESC,created_time DESC
+    </select>
 </mapper>

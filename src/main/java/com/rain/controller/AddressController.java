@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/addresses")
@@ -23,5 +25,12 @@ public class AddressController extends BaseController{
         String username = getUsernameFromSession(session);
         addressService.addNewAddress(uid,username,address);
         return new JsonResult<>(Code.UPDATE_OK,"新增收货地址成功!");
+    }
+
+    @RequestMapping({"/",""})
+    public JsonResult<List<Address>> getAddressListByUid(HttpSession session){
+        Integer uid = getUidFromSession(session);
+        List<Address> data = addressService.getByUid(uid);
+        return new JsonResult<>(Code.SELECT_OK,"获取收货地址列表成功!",data);
     }
 }

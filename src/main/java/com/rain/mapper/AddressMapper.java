@@ -2,6 +2,8 @@ package com.rain.mapper;
 
 import com.rain.entity.Address;
 
+import java.util.List;
+
 /** 收获地址模块持久层接口 **/
 public interface AddressMapper {
     /**
@@ -17,4 +19,11 @@ public interface AddressMapper {
      * @return 收获地址的数量
      */
     Integer countByUid(Integer uid);
+
+    /**
+     * 根据用户的uid查询用户的收货地址信息
+     * @param uid 用户的uid
+     * @return 收货地址对象列表
+     */
+    List<Address> findByUid(Integer uid);
 }
