@@ -3,10 +3,7 @@ package com.rain.service.impl;
 import com.rain.entity.Address;
 import com.rain.mapper.AddressMapper;
 import com.rain.service.IAddressService;
-import com.rain.service.ex.AddressCountLimitException;
-import com.rain.service.ex.DeleteException;
-import com.rain.service.ex.InsertException;
-import com.rain.service.ex.UpdateException;
+import com.rain.service.ex.*;
 import com.rain.util.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +56,7 @@ public class AddressServiceImpl implements IAddressService {
         //调用持久层方法，添加收货地址
         Integer result = addressMapper.insert(address);
         if(result != 1){
-            throw new InsertException("添加失败!",Code.UPDATE_FAIL);
+            throw new InsertException("添加异常!",Code.UPDATE_ERROR);
         }
     }
 
@@ -140,6 +137,46 @@ public class AddressServiceImpl implements IAddressService {
             if(integer != 1){
                 throw new UpdateException("设置收货地址为默认异常",Code.UPDATE_ERROR);
             }
+        }
+    }
+
+    /**
+     * 根据收货地址的aid查询某条收货地址
+     * @param aid 收货地址的aid
+     * @return 相应的收货地址信息
+     */
+    @Override
+    public Address getByAid(Integer aid) {
+        //根据aid获取收货地址对象
+        Address result = addressMapper.findByAid(aid);
+        if(result == null){
+            throw new AddressNotFoundException("查不到该收货地址!",Code.SELECT_FAIL);
+        }
+        //将不需要的信息置空
+        result.setModifiedUser(null);
+        result.setModifiedTime(null);
+        result.setCreatedUser(null);
+        result.setCreatedTime(null);
+        return result;
+    }
+
+    @Override
+    public void updateAddress(Integer uid, String username, Address address) {
+        //先判断该aid是否存在这样的收货地址
+        if(addressMapper.findByAid(address.getAid()) == null){
+            throw new AddressNotFoundException("修改失败，找不到该地址!",Code.UPDATE_FAIL);
+        }
+        //省市区,从前端获取省市区的code,再调用省市区表获取对应的名称
+        address.setProvinceName(districtService.getNameByCode(address.getProvinceCode()));//省
+        address.setCityName(districtService.getNameByCode(address.getCityCode()));//市
+        address.setAreaName(districtService.getNameByCode(address.getAreaCode()));//区
+        //日志
+        address.setModifiedUser(username);
+        address.setModifiedTime(new Date());
+        //调用更新操作
+        Integer rows = addressMapper.updateAddress(address);
+        if (rows != 1 ){
+            throw new UpdateException("更新收货地址异常!",Code.UPDATE_ERROR);
         }
     }
 

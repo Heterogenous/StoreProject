@@ -37,4 +37,19 @@ public interface IAddressService {
      */
     void deleteAddressByAid(Integer aid,Integer nextAid);
 
+    /**
+     * 根据收货地址的aid查询某条收货地址
+     * @param aid 收货地址的aid
+     * @return 相应的收货地址信息
+     */
+    Address getByAid(Integer aid);
+
+    /**
+     * 根据aid修改收货地址信息
+     * @param address 修改后的收货地址信息
+     * @param uid 修改者的uid
+     * @param username 修改者的username
+     */
+    void updateAddress(Integer uid,String username,Address address);
+
 }

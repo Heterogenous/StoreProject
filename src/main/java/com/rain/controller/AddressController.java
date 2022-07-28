@@ -47,4 +47,20 @@ public class AddressController extends BaseController{
         addressService.deleteAddressByAid(aid,nextAid);
         return new JsonResult<>(Code.DEL_OK,"删除成功!");
     }
+
+    @RequestMapping("/select")
+    public JsonResult<Address> selectAddressByAid(Integer aid){
+        Address address = addressService.getByAid(aid);
+        return new JsonResult<>(Code.SELECT_OK,"查询成功!",address);
+    }
+
+    @RequestMapping("/update")
+    public JsonResult<Void> updateAddressByAid(HttpSession session,Address address){
+        //获取当前修改者的uid以及username
+        Integer uid = getUidFromSession(session);
+        String username = getUsernameFromSession(session);
+        //更新用户
+        addressService.updateAddress(uid,username,address);
+        return new JsonResult<>(Code.UPDATE_OK,"更新收货地址成功!");
+    }
 }

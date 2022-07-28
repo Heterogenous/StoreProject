@@ -40,6 +40,8 @@ public class BaseController {
             result.setState(((DistrictNotFoundException) e).getState());
         } else if(e instanceof DeleteException){
             result.setState(((DeleteException) e).getState());
+        } else if (e instanceof AddressNotFoundException) {
+            result.setState(((AddressNotFoundException) e).getState());
         } else{
             result.setState(Code.SYSTEM_ERROR);
         }

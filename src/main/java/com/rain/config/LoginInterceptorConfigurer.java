@@ -3,6 +3,7 @@ package com.rain.config;
 import com.rain.interceptor.LoginInterceptor;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -50,10 +51,24 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
         patterns.add("/users/login");
         patterns.add("/districts/**");
 
+        //测试用
+        patterns.add("/addresses/**");
+
 
         //完成拦截器的注册
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")//表示要拦截的url是什么
                 .excludePathPatterns(patterns);
+    }
+
+    //跨域请求:就是当前网页打开的协议是file,而请求的url是http协议
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD")
+                .allowCredentials(true)
+                .maxAge(3600)
+                .allowedHeaders("*");
     }
 }
