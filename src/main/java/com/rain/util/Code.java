@@ -56,4 +56,7 @@ public class Code {
     public static final Integer DEL_OK = 600;
     public static final Integer DEL_ERROR = 602;
 
+    //退出
+    public static final Integer LOGOUT_OK = 700;
+
 }

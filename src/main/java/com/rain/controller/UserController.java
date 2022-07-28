@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +57,16 @@ public class UserController extends BaseController {
         //将对象设置到session对象中
         session.setAttribute("uid",user.getUid());
         session.setAttribute("username",user.getUsername());
+        System.out.println("<--- "+username+" 登陆网站 "+new Date() +" --->");
         return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
+    }
+
+    @RequestMapping("/logout")
+    public JsonResult<Void> logout(HttpSession session){
+        //登出,消除session
+        System.out.println("<--- "+getUsernameFromSession(session)+" 退出登陆 "+new Date() +" --->");
+        session.invalidate();
+        return new JsonResult<>(Code.LOGOUT_OK,"退出登陆!");
     }
 
     /**

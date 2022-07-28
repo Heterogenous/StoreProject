@@ -62,13 +62,13 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
     }
 
     //跨域请求:就是当前网页打开的协议是file,而请求的url是http协议
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD")
-                .allowCredentials(true)
-                .maxAge(3600)
-                .allowedHeaders("*");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOriginPatterns("*")
+//                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD")
+//                .allowCredentials(true)
+//                .maxAge(3600)
+//                .allowedHeaders("*");
+//    }
 }

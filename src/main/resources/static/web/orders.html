@@ -14,6 +14,7 @@
 		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
 		<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
 		<script src="../bootstrap3/js/bootstrap.js"></script>
+		<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<!-- 字体图标 -->
 		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
@@ -56,7 +57,8 @@
 							</div>
 						</li>
 						<li class="li-split">|</li>
-						<li><a href="login.html"><span class="fa fa-user"></span>&nbsp;登录</a></li>
+						<li id="loginLi"><a href="login.html"><span class="fa fa-user"></span>&nbsp;登录</a></li>
+						<li id="logoutLi" onclick="logout()" hidden><a href="#" id="showName"></a></li>
 					</ul>
 				</div>
 			</div>
@@ -320,10 +322,62 @@
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="http://www.dnsc.cn/">圆心科技集团有限公司</a> 版权所有
+				Copyright © 2022 dnsc.cn All Rights Reserved 京ICP备08963888号-45 <a target="_blank" href="index.html">电脑商城集团有限公司</a> 版权所有
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			$(document).ready(function () {
+				checkCookie();
+			});
+			//登陆与退出显示
+			function checkCookie(){
+				//判断是否存在登陆cookie
+				let username = $.cookie("username");
+				if(username !== null){
+					//显示退出，隐藏登陆
+					$("#loginLi").hide();
+					$("#logoutLi").show();
+					//显示名称
+					let name = '<span class="fa fa-user"></span>&nbsp;<b>#{username}</b>&nbsp;退出'
+					name = name.replace(/#{username}/g,username);
+					$("#showName").append(name);
+				}else {
+					//显示登陆，隐藏退出
+					$("#loginLi").show();
+					$("#logoutLi").hide();
+				}
+			}
+			//退出登陆操作
+			function logout() {
+				//显示登陆，隐藏退出
+				$("#loginLi").show();
+				$("#logoutLi").hide();
+				//清空cookie
+				$.cookie("uid","",{expires: -1});
+				$.cookie("username","",{expires: -1});
+				$.cookie("avatar","",{expires: -1});
+				//向服务器发送退出请求
+				$.ajax({
+					url: "/users/logout",
+					type: "GET",
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state !== 700){
+							console.log("退出失败!");
+						}else{
+							console.log(res.message+"自定义状态码:"+res.state);
+							//定向页面至登陆
+							location.href="login.html";
+						}
+
+					},
+					error: function (xhr) {
+						alert("系统异常！状态码:"+xhr.status);
+					}
+				})
+			}
+		</script>
 	</body>
 
 </html>
