@@ -52,7 +52,7 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
         patterns.add("/districts/**");
 
         //测试用
-        patterns.add("/addresses/**");
+        //patterns.add("/addresses/**");
 
 
         //完成拦截器的注册

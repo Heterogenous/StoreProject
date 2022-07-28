@@ -107,6 +107,9 @@
             <if test="zip != '' and zip != null">
                 zip = #{zip},
             </if>
+            <if test="zip == '-1'">
+                zip = null,
+            </if>
             <if test="address != '' and address != null">
                 address = #{address},
             </if>
@@ -116,8 +119,14 @@
             <if test="tel != '' and tel != null">
                 tel = #{tel},
             </if>
+            <if test="tel == '-1'">
+                tel = null,
+            </if>
             <if test="tag != '' and tag != null">
                 tag = #{tag},
+            </if>
+            <if test="tag == '-1'">
+                tag = null,
             </if>
             <if test="isDefault != null">
                 is_default = #{isDefault},
