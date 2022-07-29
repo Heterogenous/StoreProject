@@ -296,7 +296,41 @@
 			//页面初始化
 			$(document).ready(function () {
 				checkCookie();
-			})
+				showHotList();
+			});
+			//展示热销列表
+			function showHotList(){
+				$("#hot-list").empty();
+				$.ajax({
+					url: "/products/hot_list",
+					type: "POST",
+					dataType: "JSON",
+					success: function (res){
+						if(res.state === 500){
+							console.log(res.message);
+							let list = res.data;
+							for (let i = 0; i < list.length; i++) {
+								let div = '<div class="col-md-12">' +
+										'<div class="col-md-7 text-row-2"><a href="product.html?id=#{id}">#{title}</a></div>' +
+										'<div class="col-md-2">#{price}</div>' +
+										'<div class="col-md-3"><img src="..#{image}collect.png" class="img-responsive" /></div>' +
+										'</div>'
+								div = div.replace(/#{id}/g,list[i].id);
+								div = div.replace(/#{title}/g,list[i].title);
+								div = div.replace(/#{price}/g,list[i].price);
+								div = div.replace(/#{image}/g,list[i].image);
+								$("#hot-list").append(div);
+							}
+						}else{
+							alert(res.message+"，自定义状态码:"+res.state);
+						}
+
+					},
+					error: function (xhr) {
+						alert("系统异常!状态码:"+xhr.status);
+					}
+				})
+			}
 			//登陆与退出显示
 			function checkCookie(){
 				//判断是否存在登陆cookie
@@ -332,8 +366,12 @@
 					success: function (res) {
 						if(res.state !== 700){
 							console.log("退出失败!");
+						}else{
+							console.log(res.message+"自定义状态码:"+res.state);
+							//定向页面至登陆
+							location.href="login.html";
 						}
-						console.log(res.message+"自定义状态码:"+res.state);
+
 					},
 					error: function (xhr) {
 						alert("系统异常！状态码:"+xhr.status);

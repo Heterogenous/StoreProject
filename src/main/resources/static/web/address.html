@@ -454,12 +454,12 @@
 					success: function (res) {
 						if(res.state === 400){
 							console.log(res.message);
-							//网页重定向
-							//location.href="address.html";
 							//刷新列表
 							showAddressList();
 						}else {
 							alert(res.message);
+							//刷新列表
+							showAddressList();
 						}
 
 					},
@@ -611,6 +611,9 @@
 							if(data.tag !== null)$("#tag").val(data.tag);
 						}else{
 							alert(res.message+",自定义状态码:"+res.state);
+							//网页重定向
+							location.href="address.html";
+
 						}
 					},
 					error: function(xhr){

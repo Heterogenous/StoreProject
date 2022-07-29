@@ -53,12 +53,17 @@ public class UserController extends BaseController {
     public JsonResult<User> login(String username,
                                   String password,
                                   HttpSession session){
-        User user = userService.login(username, password);
-        //将对象设置到session对象中
-        session.setAttribute("uid",user.getUid());
-        session.setAttribute("username",user.getUsername());
-        System.out.println("<--- "+username+" 登陆网站 "+new Date() +" --->");
-        return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
+        //先判断是否已经登陆了
+        if(session.getAttribute("username") != null){
+            return new JsonResult<>(Code.LOGIN_FAIL,"该账户已登陆!");
+        }else{
+            User user = userService.login(username, password);
+            //将对象设置到session对象中
+            session.setAttribute("uid",user.getUid());
+            session.setAttribute("username",user.getUsername());
+            System.out.println("<--- "+username+" 登陆网站 "+new Date() +" --->");
+            return new JsonResult<>(Code.LOGIN_OK, "登陆成功!", user);
+        }
     }
 
     @RequestMapping("/logout")

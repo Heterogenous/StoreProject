@@ -301,7 +301,42 @@
 		<script type="text/javascript">
 			$(document).ready(function () {
 				checkCookie();
+				getById();
 			});
+			//获取传过来的商品id并向服务器发送请求
+			function getById(){
+				let id = $.getUrlParam("id");//获取商品id
+				//向服务器发送请求
+				$.ajax({
+					url: "/products/details",
+					type: "POST",
+					data: "id="+id,
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 500){
+							console.log(res.message);
+							let data = res.data;
+							$("#product-title").html(data.title);
+							$("#product-sell-point").html(data.sellPoint);
+							$("#product-price").html(data.price);
+
+							for (let i = 1; i <=5 ; i++) {
+								$("#product-image-" + i + "-big").attr("src", ".." + data.image + i + "_big.png");
+								$("#product-image-" + i).attr("src", ".." + data.image + i + ".jpg");
+							}
+						}else{
+							alert(res.message+",自定义状态码:"+res.state);
+							//跳转页面
+							location.href="index.html";
+						}
+					},
+					error: function (xhr){
+						alert("系统异常!状态码:"+xhr.status);
+						//跳转页面
+						location.href="index.html";
+					}
+				})
+			}
 			//登陆与退出显示
 			function checkCookie(){
 				//判断是否存在登陆cookie
@@ -340,7 +375,7 @@
 						}else{
 							console.log(res.message+"自定义状态码:"+res.state);
 							//定向页面至登陆
-							//location.href="login.html";
+							location.href="login.html";
 						}
 
 					},
