@@ -384,6 +384,83 @@
 					}
 				})
 			}
+
+
+
+			//点击加入购物车按钮事件
+			$("#btn-add-to-cart").click(function () {
+				//获取商品pid
+				let pid = $.getUrlParam("id");
+				//console.log(pid);
+				//获取用户的uid
+				let uid = $.cookie("uid");
+				//console.log(uid);
+				//获取商品价格
+				let price = $("#product-price").html();
+				//console.log(price);
+				//获取商品数量
+				let num = $("#num").val();
+				//console.log(num);
+				//根据商品pid和专属用户的uid看看是否存在着这样的产品
+				$.ajax({
+					url: "/carts/get_cart_uid_pid",
+					type: "POST",
+					data: "pid="+pid+"&uid="+uid,
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 500){
+							if(res.data !== null){
+								//若存在，则数目累加
+								let cid = res.data.cid;
+								console.log(cid);
+								$.ajax({
+									url: "/carts/update",
+									type: "POST",
+									data: "cid="+cid+"&num="+num+"&price="+price,
+									dataType: "JSON",
+									success: function (res) {
+										if(res.state === 400){
+											console.log(res.message);
+										}else{
+											alert(res.message+",自定义状态码:"+res.state);
+										}
+									},
+									error: function (xhr) {
+										alert("系统异常!状态码:"+xhr.status);
+									}
+								})
+							}else{
+								//若不存在,则添加到购物车数据表里
+								$.ajax({
+									url: "/carts/insert",
+									type: "POST",
+									data: "pid="+pid+"&uid="+uid+"&num="+num+"&price="+price,
+									dataType: "JSON",
+									success: function (res){
+										if(res.state === 400){
+											console.log(res.message);
+										}else {
+											alert(res.message+",自定义状态码:"+res.state);
+										}
+									},
+									error: function (xhr) {
+										alert("系统异常!状态码:"+xhr.status);
+									}
+								})
+							}
+							//跳转页面
+							//location.href="cart.html";
+						}else{
+							alert(res.message+",自定义状态码:"+res.state);
+						}
+					},
+					error: function (xhr){
+						alert("系统异常!状态码:"+xhr.status);
+					}
+				})
+
+
+			})
 		</script>
 	</body>
 

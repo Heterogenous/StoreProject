@@ -50,6 +50,7 @@ public class LoginInterceptorConfigurer implements WebMvcConfigurer {
         patterns.add("/users/reg");
         patterns.add("/users/login");
         patterns.add("/districts/**");
+        patterns.add("/favicon.ico");
 
         //测试用
         //patterns.add("/addresses/**");

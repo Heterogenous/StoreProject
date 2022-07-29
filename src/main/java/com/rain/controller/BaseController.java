@@ -44,6 +44,8 @@ public class BaseController {
             result.setState(((AddressNotFoundException) e).getState());
         } else if (e instanceof ProductNotFoundException) {
             result.setState(((ProductNotFoundException) e).getState());
+        } else if (e instanceof CartNotFoundProductException) {
+            result.setState(((CartNotFoundProductException) e).getState());
         } else{
             result.setState(Code.SYSTEM_ERROR);
         }
