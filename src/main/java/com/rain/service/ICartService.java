@@ -1,6 +1,9 @@
 package com.rain.service;
 
 import com.rain.entity.Cart;
+import com.rain.entity.CartDTO;
+
+import java.util.List;
 
 public interface ICartService {
     /**
@@ -25,4 +28,18 @@ public interface ICartService {
      * @param cart 购物车中商品的信息
      */
     void updateCart(Integer uid,String username,Cart cart);
+
+    /**
+     * 根据用户的uid获取所有购物车的商品,联合表查询 cart + product.image + product.title
+     * @param uid 用户的uid
+     * @return 购物车里的商品列表
+     */
+    List<CartDTO> getByUid(Integer uid);
+
+
+    /**
+     * 根据cid删除购物车里对应的商品
+     * @param listCid
+     */
+    void batchDelete(List<Integer> listCid);
 }

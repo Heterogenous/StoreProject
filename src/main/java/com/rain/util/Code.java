@@ -54,6 +54,7 @@ public class Code {
 
     //删除成功异常
     public static final Integer DEL_OK = 600;
+    public static final Integer DEL_FAIL = 601;
     public static final Integer DEL_ERROR = 602;
 
     //退出

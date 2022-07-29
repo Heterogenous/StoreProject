@@ -1,19 +1,19 @@
 package com.rain.service.impl;
 
 import com.rain.entity.Cart;
+import com.rain.entity.CartDTO;
 import com.rain.entity.User;
 import com.rain.mapper.CartMapper;
 import com.rain.mapper.UserMapper;
 import com.rain.service.ICartService;
-import com.rain.service.ex.CartNotFoundProductException;
-import com.rain.service.ex.InsertException;
-import com.rain.service.ex.UpdateException;
-import com.rain.service.ex.UserNotFoundException;
+import com.rain.service.ex.*;
 import com.rain.util.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CartService implements ICartService {
@@ -70,6 +70,27 @@ public class CartService implements ICartService {
         Integer rows = cartMapper.updateCart(cart);
         if(rows!=1){
             throw new UpdateException("购物车中的商品更新异常!",Code.UPDATE_ERROR);
+        }
+    }
+
+    @Override
+    public List<CartDTO> getByUid(Integer uid){
+        List<CartDTO> list = cartMapper.findByUidWithProduct(uid);
+        if(list.size() == 0){
+            throw new CartNotFoundProductException("购物车里暂时没有商品!",Code.SELECT_FAIL);
+        }
+        return list;
+    }
+
+    @Override
+    @Transactional
+    public void batchDelete(List<Integer> listCid) {
+        if(listCid.size() == 0){
+            throw new CartNotFoundProductException("删除的商品不能为空!",Code.DEL_FAIL);
+        }
+        Integer rows = cartMapper.batchDelete(listCid);
+        if(rows <= 0){
+            throw new DeleteException("删除商品异常!",Code.DEL_ERROR);
         }
     }
 }

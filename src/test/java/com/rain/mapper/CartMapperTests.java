@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class CartMapperTests {
@@ -28,5 +31,21 @@ public class CartMapperTests {
         cart.setPrice(1200L);
         Integer integer = cartMapper.updateCart(cart);
         System.out.println(integer);
+    }
+
+    @Test
+    public void findByUid(){
+        List<Cart> carts = cartMapper.findByUid(8);
+        System.out.println(carts);
+    }
+
+    @Test
+    public void batchDelete(){
+        List<Integer> listCid = new ArrayList<>();
+        listCid.add(1);
+        listCid.add(2);
+        listCid.add(3);
+        Integer rows = cartMapper.batchDelete(listCid);
+        System.out.println(rows);
     }
 }

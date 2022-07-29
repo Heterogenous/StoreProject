@@ -49,4 +49,43 @@
         </set>
         where cid = #{cid}
     </update>
+
+    <!--
+        List<Cart> findByUid(Integer uid);
+    -->
+    <select id="findByUid" resultMap="cartEntityMap">
+        select <include refid="exceptCreatedAndModified"/>
+        from t_cart
+        where uid = #{uid}
+        order by modified_time DESC,
+                 created_time DESC
+    </select>
+    <!--
+        Integer batchDelete(List<Integer> listCid);
+    -->
+    <delete id="batchDelete" parameterType="int">
+        delete from t_cart where cid IN
+        <foreach collection="list" item="cid" open="(" close=")" separator=",">
+            #{cid}
+        </foreach>
+    </delete>
+
+    <!--
+        List<CartDTO> findByUidWithProduct(Integer uid)
+    -->
+    <resultMap id="cartDTOMap" type="com.rain.entity.CartDTO">
+        <id column="cid" property="cart.cid"/>
+        <result column="uid" property="cart.uid"/>
+        <result column="pid" property="cart.pid"/>
+        <result column="c_price" property="cart.price"/>
+        <result column="c_num" property="cart.num"/>
+        <result column="image" property="image"/>
+        <result column="title" property="title"/>
+    </resultMap>
+    <select id="findByUidWithProduct" resultMap="cartDTOMap">
+        select cid,uid,pid,c.price c_price,c.num c_num,image,title
+        from t_cart c Join t_product p
+            on c.pid = p.id
+        where uid = #{uid}
+    </select>
 </mapper>

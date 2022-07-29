@@ -270,13 +270,20 @@
 		</footer>
 		<!--页脚结束-->
 		<script type="text/javascript">
+			//初始化
 			$(function() {
 				//返回链接
 				$(".link-account").click(function() {
 					location.href = "orderConfirm.html";
-				})
-
+				});
+				//检查登陆状况
 				checkCookie();
+				//清空购物车列表
+				$("#cart-list").empty();
+				//从cookie中获取uid
+				let uid = $.cookie("uid");
+				//展示购物车里的商品列表
+				showCartList(uid);
 			})
 			//登陆与退出显示
 			function checkCookie(){
@@ -294,6 +301,8 @@
 					//显示登陆，隐藏退出
 					$("#loginLi").show();
 					$("#logoutLi").hide();
+					//页面跳转
+					location.href="login.html";
 				}
 			}
 			//退出登陆操作
@@ -325,6 +334,60 @@
 					}
 				})
 			}
+
+			//展示购物车里的商品列表
+			function showCartList(uid){
+				$.ajax({
+					url: "/carts/select_uid",
+					type: "POST",
+					data: "uid="+uid,
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 500){
+							console.log(res.message);
+							let list = res.data;
+							//console.log(list);
+							//展示商品在购物车里
+							for (let i = 0; i < list.length; i++) {
+								let td = '<tr>' +
+										'<td>' +
+										'<input type="checkbox" class="ckitem" />' +
+										'</td>' +
+										'<td><img src="..#{image}collect.png" class="img-responsive" /></td>' +
+										'<td>#{title}</td>' +
+										'<td>¥<span id="goodsPrice#{i}">#{price}</span></td>' +
+										'<td>' +
+										'<input type="button" value="-" class="num-btn" onclick="reduceNum(#{i})" />' +
+										'<input id="goodsCount#{i}" type="text" size="2" readonly="readonly" class="num-text" value="#{num}">' +
+										'<input class="num-btn" type="button" value="+" onclick="addNum(#{i})" />' +
+										'</td>' +
+										'<td><span id="goodsCast#{i}"></span></td>' +
+										'<td>' +
+										'<input type="button" onclick="delCartItem(this)" class="cart-del btn btn-default btn-xs" value="删除" />' +
+										'</td>' +
+										'</tr>';
+								td = td.replace(/#{image}/g,list[i].image);
+								td = td.replace(/#{title}/g,list[i].title);
+								td = td.replace(/#{price}/g,list[i].cart.price);
+								td = td.replace(/#{num}/g,list[i].cart.num);
+								//td = td.replace(/#{total_price}/g,"￥"+(list[i].cart.num*list[i].cart.price));
+								td = td.replace(/#{cid}/g,list[i].cart.cid);
+								td = td.replace(/#{i}/g,i);
+								$("#cart-list").append(td);
+								//计算单行价格
+								calcRow(i)
+							}
+
+						}else {
+							console.log(res.message+",自定义状态码:"+res.state);
+						}
+					},
+					error: function (xhr){
+						alert("系统异常!状态码:"+xhr.status);
+					}
+				})
+			}
+
 		</script>
 	</body>
 

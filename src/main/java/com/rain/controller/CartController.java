@@ -1,6 +1,7 @@
 package com.rain.controller;
 
 import com.rain.entity.Cart;
+import com.rain.entity.CartDTO;
 import com.rain.service.ICartService;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.net.ServerSocket;
+import java.util.List;
 
 @RestController
 @RequestMapping("/carts")
@@ -37,5 +39,17 @@ public class CartController extends BaseController{
         String username = getUsernameFromSession(session);
         cartService.updateCart(uid,username,cart);
         return new JsonResult<>(Code.UPDATE_OK,"成功更新购物车中的商品信息!");
+    }
+
+    @RequestMapping("/select_uid")
+    public JsonResult<List<CartDTO>> selectByUid(Integer uid){
+        List<CartDTO> carts = cartService.getByUid(uid);
+        return new JsonResult<>(Code.SELECT_OK,"查询购物车的商品列表成功!",carts);
+    }
+
+    @RequestMapping("/delete")
+    public JsonResult<Void> delete(List<Integer> listCid){
+        cartService.batchDelete(listCid);
+        return new JsonResult<>(Code.DEL_OK,"删除成功!");
     }
 }

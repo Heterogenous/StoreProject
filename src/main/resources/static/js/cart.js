@@ -3,6 +3,7 @@ function addNum(rid) {
 	var n = parseInt($("#goodsCount"+rid).val());
 	$("#goodsCount"+rid).val(n + 1);
 	calcRow(rid);
+
 }
 /*按减号数量减*/
 function reduceNum(rid) {
@@ -18,7 +19,7 @@ function checkall(ckbtn) {
 	//calcTotal();
 }
 //删除按钮
-function delCartItem(btn) {
+function delCartItem(btn,cid) {
 	
 	$(btn).parents("tr").remove();
 	//calcTotal();
