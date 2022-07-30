@@ -24,7 +24,9 @@ function addNum(rid,cid,uid,pid) {
 		error: function (xhr) {
 			alert("系统异常!状态码:"+xhr.status);
 		}
-	})
+	});
+	//显示价格与数量
+	checkBoxClick();
 }
 /*按减号数量减*/
 function reduceNum(btn,rid,cid,uid,pid) {
@@ -61,12 +63,15 @@ function reduceNum(btn,rid,cid,uid,pid) {
 			}
 		});
 	}
+	//显示价格与数量
+	checkBoxClick();
 }
 /*全选全不选*/
 function checkall(ckbtn) {
 	$(".ckitem").prop("checked", $(ckbtn).prop("checked"));
 	//calcTotal();
-
+	//显示价格与数量
+	checkBoxClick();
 }
 //删除按钮
 function delCartItem(btn,cid) {

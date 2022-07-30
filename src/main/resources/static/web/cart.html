@@ -356,7 +356,7 @@
 							for (let i = 0; i < list.length; i++) {
 								let td = '<tr>' +
 										'<td>' +
-										'<input id="cids" name="cids" value="#{cid}" type="checkbox" class="ckitem" onclick="checkBoxClick()" />' +
+										'<input id="cids#{i}" name="cids#{i}" value="#{cid}" type="checkbox" class="ckitem" onclick="checkBoxClick()" />' +
 										'</td>' +
 										'<td><img src="..#{image}collect.png" class="img-responsive" /></td>' +
 										'<td>#{title}</td>' +
@@ -400,21 +400,27 @@
 
 			//复选框按钮关联全选按钮
 			function checkBoxClick() {
-				console.log(CART_ID_LIST.length);
+				//console.log(CART_ID_LIST.length);
 				//遍历所有复选框
 				let flag = 1;//代表都选了，0代表至少有一个没选
 				let sum = 0;
 				let total = 0;
-				for (let i = CART_ID_LIST.length - 1; i >= 0; i--) {
-					if (!$(".ckitem")[i].checked) {
+				for (let i = 0; i < CART_ID_LIST.length; i++) {
+					if (typeof($("#cids"+i).prop("checked")) === "undefined") {
+						console.log("total----"+total);
+					}else if(!$("#cids"+i).prop("checked")){
 						//不选中
 						//改变flag
 						flag = 0;
-					}else{
+					} else {
 						//多少个选中
 						sum+=1;
 						//计算总金额
+						console.log("$(\"#goodsPrice\"+"+i+").html()"+$("#goodsPrice"+i).html());
+						console.log("$(\"#goodsCount\"+"+i+").val()"+$("#goodsCount"+i).val())
 						total+=parseInt($("#goodsPrice"+i).html()) * parseInt($("#goodsCount"+i).val());
+						//测试
+						console.log(total);
 					}
 				}
 				//显示在selectCount以及selectTotal中
