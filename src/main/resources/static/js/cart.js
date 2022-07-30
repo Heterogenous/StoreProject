@@ -75,10 +75,6 @@ function checkall(ckbtn) {
 }
 //删除按钮
 function delCartItem(btn,cid) {
-	// console.log("删除按钮:"+cid);
-	//向服务器发送删除请求
-	// let listCid = [];
-	// listCid.push(parseInt(cid));
 	let list = [];
 	list.push(parseInt(cid));
 	$.ajax({
@@ -109,15 +105,50 @@ function delCartItem(btn,cid) {
 }
 //批量删除按钮
 function selDelCart() {
+	let list = [];
 	//遍历所有按钮
-	for (var i = $(".ckitem").length - 1; i >= 0; i--) {
+	// for (var i = $(".ckitem").length - 1; i >= 0; i--) {
+	// 	//如果选中
+	// 	if ($(".ckitem")[i].checked) {
+	// 		//删除
+	// 		$($(".ckitem")[i]).parents("tr").remove();
+	// 	}
+	// }
+	for (let i = 0; i < CART_ID_LIST.length; i++) {
 		//如果选中
-		if ($(".ckitem")[i].checked) {
+		if( typeof($("#cids"+i)) !== "undefined" && $("#cids"+i).prop("checked")){
 			//删除
-			$($(".ckitem")[i]).parents("tr").remove();
+			list.push(parseInt($("#cids"+i).val()));
+			//console.log($("#cids"+i).parent().parent("tr"));
+			$("#cids"+i).parent().parent().remove();
 		}
 	}
-	//calcTotal();
+
+	//向服务器请求
+	$.ajax({
+		url: "/carts/delete",
+		type: "POST",
+		data: JSON.stringify(list),
+		headers : {
+			'Accept' : 'application/json',
+			'Content-Type' : 'application/json'
+		},
+		dataType: "JSON",
+		success: function (res) {
+			if(res.state === 600){
+				console.log(res.message);
+				//显示价格与数量
+				checkBoxClick();
+			}else{
+				alert(res.message+",自定义状态码:"+res.state);
+			}
+		},
+		error: function (xhr) {
+			alert("系统异常!状态码:"+xhr.status);
+		}
+	});
+
+
 }
 $(function() {
 	//单选一个也得算价格
