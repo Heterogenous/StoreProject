@@ -104,7 +104,7 @@
 								<thead>
 									<tr>
 										<th width="8%">
-											<input type="checkbox" class="ckall" onclick="checkall(this)" />全选</th>
+											<input id="allCid" type="checkbox" class="ckall" onclick="checkall(this)" />全选</th>
 										<th width="110"></th>
 										<th width="29%">商品</th>
 										<th width="11%">单价</th>
@@ -278,8 +278,6 @@
 				});
 				//检查登陆状况
 				checkCookie();
-				//清空购物车列表
-				$("#cart-list").empty();
 				//从cookie中获取uid
 				let uid = $.cookie("uid");
 				//展示购物车里的商品列表
@@ -337,6 +335,9 @@
 
 			//展示购物车里的商品列表
 			function showCartList(uid){
+				//清空购物车列表
+				$("#cart-list").empty();
+				//向服务器发送请求
 				$.ajax({
 					url: "/carts/select_uid",
 					type: "POST",
@@ -351,28 +352,31 @@
 							for (let i = 0; i < list.length; i++) {
 								let td = '<tr>' +
 										'<td>' +
-										'<input type="checkbox" class="ckitem" />' +
+										'<input id="cids" name="cids" value="#{cid}" type="checkbox" class="ckitem" onclick="checkBoxClick()" />' +
 										'</td>' +
 										'<td><img src="..#{image}collect.png" class="img-responsive" /></td>' +
 										'<td>#{title}</td>' +
 										'<td>¥<span id="goodsPrice#{i}">#{price}</span></td>' +
 										'<td>' +
-										'<input type="button" value="-" class="num-btn" onclick="reduceNum(#{i})" />' +
+										'<input type="button" value="-" class="num-btn" onclick="reduceNum(this,#{i},#{cid},#{uid},#{pid})" />' +
 										'<input id="goodsCount#{i}" type="text" size="2" readonly="readonly" class="num-text" value="#{num}">' +
-										'<input class="num-btn" type="button" value="+" onclick="addNum(#{i})" />' +
+										'<input class="num-btn" type="button" value="+" onclick="addNum(#{i},#{cid},#{uid},#{pid})" />' +
 										'</td>' +
 										'<td><span id="goodsCast#{i}"></span></td>' +
 										'<td>' +
-										'<input type="button" onclick="delCartItem(this)" class="cart-del btn btn-default btn-xs" value="删除" />' +
+										'<input type="button" onclick="delCartItem(this,#{cid})" class="cart-del btn btn-default btn-xs" value="删除" />' +
 										'</td>' +
 										'</tr>';
 								td = td.replace(/#{image}/g,list[i].image);
 								td = td.replace(/#{title}/g,list[i].title);
-								td = td.replace(/#{price}/g,list[i].cart.price);
+								td = td.replace(/#{price}/g,(list[i].cart.price === list[i].realPrice?list[i].cart.price:list[i].realPrice));
 								td = td.replace(/#{num}/g,list[i].cart.num);
 								//td = td.replace(/#{total_price}/g,"￥"+(list[i].cart.num*list[i].cart.price));
-								td = td.replace(/#{cid}/g,list[i].cart.cid);
+								//i注入必须比cid前，否则会接收不到cid
 								td = td.replace(/#{i}/g,i);
+								td = td.replace(/#{cid}/g,list[i].cart.cid);
+								td = td.replace(/#{uid}/g,list[i].cart.uid);
+								td = td.replace(/#{pid}/g,list[i].cart.pid);
 								$("#cart-list").append(td);
 								//计算单行价格
 								calcRow(i)
@@ -387,6 +391,42 @@
 					}
 				})
 			}
+
+			//复选框按钮关联全选按钮
+			function checkBoxClick() {
+				//遍历所有复选框
+				let flag = 1;//代表都选了，0代表至少有一个没选
+				let sum = 0;
+				let total = 0;
+				for (let i = $(".ckitem").length - 1; i >= 0; i--) {
+					if (!$(".ckitem")[i].checked) {
+						//不选中
+						//改变flag
+						flag = 0;
+					}else{
+						//多少个选中
+						sum+=1;
+						//计算总金额
+						total+=parseInt($("#goodsPrice"+i).html()) * parseInt($("#goodsCount"+i).val());
+					}
+				}
+				//显示在selectCount以及selectTotal中
+				$("#selectCount").html(sum);
+				$("#selectTotal").html(total);
+				//判断是否是全选
+				//console.log("flag:"+flag)
+				if(flag === 1){
+					//判断全选按钮的状态
+					if(!$("#allCid").prop("checked"))$("#allCid").prop("checked",true);
+				}else{
+					//判断全选按钮的状态
+					if($("#allCid").prop("checked"))$("#allCid").prop("checked",false);
+				}
+			}
+
+
+
+
 
 		</script>
 	</body>

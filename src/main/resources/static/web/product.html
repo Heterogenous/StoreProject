@@ -412,11 +412,13 @@
 							if(res.data !== null){
 								//若存在，则数目累加
 								let cid = res.data.cid;
-								console.log(cid);
+								//将商品累加
+								num = parseInt(num) + res.data.num;
+								//alert(num);
 								$.ajax({
 									url: "/carts/update",
 									type: "POST",
-									data: "cid="+cid+"&num="+num+"&price="+price,
+									data: "cid="+cid+"&num="+num+"&price="+price+"&pid="+pid+"&uid="+uid,
 									dataType: "JSON",
 									success: function (res) {
 										if(res.state === 400){
@@ -449,7 +451,7 @@
 								})
 							}
 							//跳转页面
-							//location.href="cart.html";
+							location.href="cart.html";
 						}else{
 							alert(res.message+",自定义状态码:"+res.state);
 						}

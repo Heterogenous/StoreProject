@@ -7,6 +7,16 @@ public class CartDTO extends BaseEntity{
 
     private String title;
 
+    private Long realPrice;
+
+    public Long getRealPrice() {
+        return realPrice;
+    }
+
+    public void setRealPrice(Long realPrice) {
+        this.realPrice = realPrice;
+    }
+
     public String getTitle() {
         return title;
     }

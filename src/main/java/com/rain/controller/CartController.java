@@ -5,9 +5,9 @@ import com.rain.entity.CartDTO;
 import com.rain.service.ICartService;
 import com.rain.util.Code;
 import com.rain.util.JsonResult;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.net.ServerSocket;
@@ -48,7 +48,8 @@ public class CartController extends BaseController{
     }
 
     @RequestMapping("/delete")
-    public JsonResult<Void> delete(List<Integer> listCid){
+    public JsonResult<Void> delete(@RequestBody List<Integer> listCid){
+        System.out.println(listCid);
         cartService.batchDelete(listCid);
         return new JsonResult<>(Code.DEL_OK,"删除成功!");
     }

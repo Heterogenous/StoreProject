@@ -81,11 +81,12 @@
         <result column="c_num" property="cart.num"/>
         <result column="image" property="image"/>
         <result column="title" property="title"/>
+        <result column="realPrice" property="realPrice"/>
     </resultMap>
     <select id="findByUidWithProduct" resultMap="cartDTOMap">
-        select cid,uid,pid,c.price c_price,c.num c_num,image,title
-        from t_cart c Join t_product p
-            on c.pid = p.id
-        where uid = #{uid}
+        select cid,uid,pid,t_cart.price c_price,t_cart.num c_num,image,title,t_product.price realPrice
+        from t_cart Join t_product
+            on t_cart.pid = t_product.id
+        where uid = #{uid} order by t_cart.created_time DESC
     </select>
 </mapper>

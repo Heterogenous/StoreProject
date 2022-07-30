@@ -12,11 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class CartService implements ICartService {
+public class CartServiceImpl implements ICartService {
 
     @Autowired
     private CartMapper cartMapper;
@@ -57,13 +58,14 @@ public class CartService implements ICartService {
             throw new UserNotFoundException("更新购物车中的商品:查询不到用户",Code.SELECT_FAIL);
         }
         //根据uid和pid查询，原购物车里的信息
+        //System.out.println(cart.getUid()+"---"+cart.getPid());
         Cart result = cartMapper.findByUidAndPid(cart.getUid(), cart.getPid());
         if(result == null){
             throw new CartNotFoundProductException("在更新购物车商品中找不到该商品!",Code.SELECT_FAIL);
         }
         //以及数量
-        cart.setNum(result.getNum()+cart.getNum());
-
+        //cart.setNum(result.getNum()+cart.getNum());
+        cart.setCid(result.getCid());
         //设置修改者与时间
         cart.setModifiedUser(username);
         cart.setModifiedTime(new Date());
@@ -88,6 +90,11 @@ public class CartService implements ICartService {
         if(listCid.size() == 0){
             throw new CartNotFoundProductException("删除的商品不能为空!",Code.DEL_FAIL);
         }
+        //转换成List<Integer>集合
+//        List<Integer> cids = new ArrayList<>();
+//        for (int i = 0; i < listCid.length; i++) {
+//            cids.add(listCid[i]);
+//        }
         Integer rows = cartMapper.batchDelete(listCid);
         if(rows <= 0){
             throw new DeleteException("删除商品异常!",Code.DEL_ERROR);
