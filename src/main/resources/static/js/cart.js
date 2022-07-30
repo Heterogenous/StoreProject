@@ -25,13 +25,11 @@ function addNum(rid,cid,uid,pid) {
 			alert("系统异常!状态码:"+xhr.status);
 		}
 	})
-	//调用checkboxlist
-	checkBoxClick();
 }
 /*按减号数量减*/
 function reduceNum(btn,rid,cid,uid,pid) {
 	var n = parseInt($("#goodsCount"+rid).val());
-	if (n == 0)
+	if (n === 0)
 		return;
 	$("#goodsCount"+rid).val(n - 1);
 	calcRow(rid);
@@ -63,15 +61,11 @@ function reduceNum(btn,rid,cid,uid,pid) {
 			}
 		});
 	}
-	//调用checkboxlist
-	checkBoxClick();
 }
 /*全选全不选*/
 function checkall(ckbtn) {
 	$(".ckitem").prop("checked", $(ckbtn).prop("checked"));
 	//calcTotal();
-	//显示价格与数量
-	checkBoxClick();
 
 }
 //删除按钮
