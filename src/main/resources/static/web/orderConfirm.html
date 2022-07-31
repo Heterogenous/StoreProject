@@ -23,6 +23,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/orderConfirm.css" />
 		<link rel="stylesheet" type="text/css" href="../css/cart.css" />
 		<script src="../js/orderConfirm.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-getUrlParam.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 
 	<body>
@@ -252,8 +253,27 @@
 		</footer>
 		<!--页脚结束-->
 		<script type="text/javascript">
+			let CART_CID_LIST = [];
 			$(document).ready(function () {
+				//检查登陆情况
 				checkCookie();
+				//判断是否存在listCid
+				if((typeof($.getUrlParam("listCid"))==="undefine") || $.getUrlParam("listCid") === "" || $.getUrlParam("listCid") === null){
+					//重定向页面
+					location.href="cart.html"
+				}
+				//情况列表
+				$("#cart-list").empty();
+				//获取地址传参的值
+				let list = $.getUrlParam("listCid").split(",");
+				for (let i = 0; i < list.length; i++) {
+					CART_CID_LIST.push(parseInt(list[i]));
+				}
+				//console.log(CART_CID_LIST);
+				//显示被选中的商品
+				showCartListSelected(CART_CID_LIST);
+
+
 			});
 			//登陆与退出显示
 			function checkCookie(){
@@ -299,6 +319,57 @@
 					},
 					error: function (xhr) {
 						alert("系统异常！状态码:"+xhr.status);
+					}
+				})
+			}
+			//查询选中的商品
+			function showCartListSelected(listCid){
+				//向服务器发送数据请求
+				$.ajax({
+					url: "/carts/select",
+					type: "POST",
+					data: JSON.stringify(listCid),
+					headers:{
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 500){
+							console.log(res.message);
+							//console.log(res.data);
+							let list = res.data;
+							let selectedProduct = 0;
+							let sumPrice = 0;
+							//在页面中展示商品
+							for (let i = 0; i < list.length; i++) {
+								let tr = '<tr>' +
+										'<td><img src="..#{image}collect.png" class="img-responsive" /></td>' +
+										'<td>#{title}</td>' +
+										'<td>¥<span>#{price}</span></td>' +
+										'<td>#{num}</td>\n' +
+										'<td>¥<span>#{totalPrice}</span></td>' +
+										'</tr>';
+								tr = tr.replace(/#{image}/g,list[i].image);
+								tr = tr.replace(/#{title}/g,list[i].title);
+								tr = tr.replace(/#{price}/g,list[i].realPrice);
+								tr = tr.replace(/#{num}/g,list[i].cart.num);
+								tr = tr.replace(/#{totalPrice}/g,(list[i].realPrice * list[i].cart.num));
+								//获取选中以及总金额
+								selectedProduct += 1;
+								sumPrice += (list[i].realPrice * list[i].cart.num);
+								//添加到表中
+								$("#cart-list").append(tr);
+							}
+							//显示选中的商品以及总金额
+							$("#all-count").html(selectedProduct);
+							$("#all-price").html(sumPrice);
+						}else{
+							alert(res.message+",自定义状态码:"+res.state);
+						}
+					},
+					error: function (xhr) {
+						alert("系统异常!状态码:"+xhr.status);
 					}
 				})
 			}

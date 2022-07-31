@@ -1,6 +1,7 @@
 package com.rain.mapper;
 
 import com.rain.entity.Cart;
+import com.rain.entity.CartDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,15 @@ public class CartMapperTests {
         listCid.add(3);
         Integer rows = cartMapper.batchDelete(listCid);
         System.out.println(rows);
+    }
+
+    @Test
+    public void batchSelect(){
+        List<Integer> listCid = new ArrayList<>();
+        listCid.add(53);
+        listCid.add(55);
+        List<CartDTO> list = cartMapper.batchSelect(listCid);
+//        list.forEach(System.out::println);
+        System.out.println(list.size());
     }
 }

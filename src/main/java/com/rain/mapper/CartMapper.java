@@ -46,8 +46,15 @@ public interface CartMapper {
 
     /**
      * 根据传入的cid进行批量删除
-     * @param listCid
-     * @return
+     * @param listCid cid列表
+     * @return 受影响行数
      */
     Integer batchDelete(List<Integer> listCid);
+
+    /**
+     * 批量查询购物车里的商品。联合表查询
+     * @param listCid 查询的cid数组
+     * @return 查询的购物车里的商品列表
+     */
+    List<CartDTO> batchSelect(List<Integer> listCid);
 }

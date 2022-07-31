@@ -49,8 +49,14 @@ public class CartController extends BaseController{
 
     @RequestMapping("/delete")
     public JsonResult<Void> delete(@RequestBody List<Integer> listCid){
-        System.out.println(listCid);
+        //System.out.println(listCid);
         cartService.batchDelete(listCid);
         return new JsonResult<>(Code.DEL_OK,"删除成功!");
+    }
+
+    @RequestMapping("/select")
+    public JsonResult<List<CartDTO>> select(@RequestBody List<Integer> listCid){
+        List<CartDTO> cartDTOList = cartService.batchSelect(listCid);
+        return new JsonResult<>(Code.SELECT_OK,"查询成功!",cartDTOList);
     }
 }

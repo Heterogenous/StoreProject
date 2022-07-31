@@ -100,4 +100,16 @@ public class CartServiceImpl implements ICartService {
             throw new DeleteException("删除商品异常!",Code.DEL_ERROR);
         }
     }
+
+    @Override
+    public List<CartDTO> batchSelect(List<Integer> listCid) {
+        if(listCid.size() == 0){
+            throw new CartNotFoundProductException("结算的商品不能为空!",Code.SELECT_FAIL);
+        }
+        List<CartDTO> cartDTOList = cartMapper.batchSelect(listCid);
+        if(cartDTOList.size() == 0 || cartDTOList == null){
+            throw new CartNotFoundProductException("购物车里没有这样的商品!",Code.SELECT_FAIL);
+        }
+        return cartDTOList;
+    }
 }

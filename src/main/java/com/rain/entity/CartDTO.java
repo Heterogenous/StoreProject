@@ -1,7 +1,7 @@
 package com.rain.entity;
 
 /** 多表联合查询返回的DTO对象 cart + product.image **/
-public class CartDTO extends BaseEntity{
+public class CartDTO{
     private Cart cart;
     private String image;
 

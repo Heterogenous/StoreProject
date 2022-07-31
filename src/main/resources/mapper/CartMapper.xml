@@ -89,4 +89,18 @@
             on t_cart.pid = t_product.id
         where uid = #{uid} order by t_cart.created_time DESC
     </select>
+
+    <!--
+        List<CartDTO> batchSelect(List<Integer> listCid);
+    -->
+    <select id="batchSelect" resultMap="cartDTOMap">
+        select cid,uid,pid,t_cart.price c_price,t_cart.num c_num,image,title,t_product.price realPrice
+        from t_cart Join t_product
+                         on t_cart.pid = t_product.id
+        where cid in
+        <foreach collection="list" separator="," open="(" close=")" item="cid">
+            #{cid}
+        </foreach>
+        order by t_cart.created_time DESC
+    </select>
 </mapper>

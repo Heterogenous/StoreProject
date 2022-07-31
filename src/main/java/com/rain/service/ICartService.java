@@ -42,4 +42,11 @@ public interface ICartService {
      * @param listCid
      */
     void batchDelete(List<Integer> listCid);
+
+    /**
+     * 批量查询被选中的商品
+     * @param listCid 被选中的购物车的商品的cid
+     * @return 查询到的商品列表
+     */
+    List<CartDTO> batchSelect(List<Integer> listCid);
 }

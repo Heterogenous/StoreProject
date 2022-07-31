@@ -176,7 +176,7 @@
 							</div>
 							<div>
 								<span class="pull-right">
-								<input type="submit" value="  结  算  " class="btn btn-primary btn-lg link-account" />
+								<input id="btn-settlement" type="button" value="  结  算  " class="btn btn-primary btn-lg link-account" />
 							</span>
 							</div>
 						</form>
@@ -275,9 +275,9 @@
 			//初始化
 			$(function() {
 				//返回链接
-				$(".link-account").click(function() {
-					location.href = "orderConfirm.html";
-				});
+				// $(".link-account").click(function() {
+				// 	location.href = "orderConfirm.html";
+				// });
 				//检查登陆状况
 				checkCookie();
 				//从cookie中获取uid
@@ -407,7 +407,7 @@
 				let total = 0;
 				for (let i = 0; i < CART_ID_LIST.length; i++) {
 					if (typeof($("#cids"+i).prop("checked")) === "undefined") {
-						console.log("total----"+total);
+						//console.log("total----"+total);
 					}else if(!$("#cids"+i).prop("checked")){
 						//不选中
 						//改变flag
@@ -416,11 +416,11 @@
 						//多少个选中
 						sum+=1;
 						//计算总金额
-						console.log("$(\"#goodsPrice\"+"+i+").html()"+$("#goodsPrice"+i).html());
-						console.log("$(\"#goodsCount\"+"+i+").val()"+$("#goodsCount"+i).val())
+						// console.log("$(\"#goodsPrice\"+"+i+").html()"+$("#goodsPrice"+i).html());
+						// console.log("$(\"#goodsCount\"+"+i+").val()"+$("#goodsCount"+i).val())
 						total+=parseInt($("#goodsPrice"+i).html()) * parseInt($("#goodsCount"+i).val());
 						//测试
-						console.log(total);
+						//console.log(total);
 					}
 				}
 				//显示在selectCount以及selectTotal中
@@ -436,6 +436,28 @@
 					if($("#allCid").prop("checked"))$("#allCid").prop("checked",false);
 				}
 			}
+
+			//结算按钮点击事件
+			$("#btn-settlement").click(function () {
+				//需要结算的商品的cid
+				let listCid = [];
+				//遍历选中的按钮
+				for(let i = 0; i < CART_ID_LIST.length ; i++){
+					if(typeof($("#cids"+i) !== "undefine") && $("#cids"+i).prop("checked")){
+						//将值存入到数组中
+						listCid.push(parseInt($("#cids"+i).val()));
+					}
+				}
+				//测试
+				//console.log(listCid);
+				//拼接
+				if(listCid.length !== 0){
+					//跳转到结算页面
+					location.href="orderConfirm.html?listCid="+listCid;
+				}else{
+					alert("请选中需要结算的商品!");
+				}
+			});
 
 
 
