@@ -1,6 +1,6 @@
 $(function() {
 	$(".link-pay").click(function() {
-		location.href = "payment.html";
+			location.href = "payment.html";
 	})
 })
 $(function() {

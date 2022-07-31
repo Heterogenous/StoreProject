@@ -22,7 +22,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
 		<link rel="stylesheet" type="text/css" href="../css/orderConfirm.css" />
 		<link rel="stylesheet" type="text/css" href="../css/cart.css" />
-		<script src="../js/orderConfirm.js" type="text/javascript" charset="utf-8"></script>
+<!--		<script src="../js/orderConfirm.js" type="text/javascript" charset="utf-8"></script>-->
 		<script src="../js/jquery-getUrlParam.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 
@@ -253,7 +253,13 @@
 		</footer>
 		<!--页脚结束-->
 		<script type="text/javascript">
+			//商品所属的cid
 			let CART_CID_LIST = [];
+			//地址的所属用户的uid
+			let ADDRESS_UID = -1;
+			//是否可以在线支付，默认为false
+			let IS_PAY = false;
+			//初始化函数
 			$(document).ready(function () {
 				//检查登陆情况
 				checkCookie();
@@ -272,6 +278,13 @@
 				//console.log(CART_CID_LIST);
 				//显示被选中的商品
 				showCartListSelected(CART_CID_LIST);
+				//给全局变量的uid赋值,从登陆的cookie获取
+				ADDRESS_UID = parseInt($.cookie("uid"));
+				//console.log("地址的uid："+ADDRESS_UID);
+				//清空地址栏信息
+				$("#address-list").empty();
+				//显示地址信息
+				getAddressByUid(ADDRESS_UID);
 
 
 			});
@@ -364,6 +377,9 @@
 							//显示选中的商品以及总金额
 							$("#all-count").html(selectedProduct);
 							$("#all-price").html(sumPrice);
+							//储存uid
+							//ADDRESS_UID = list[0].cart.uid;
+							//console.log(list[0].cart.uid);
 						}else{
 							alert(res.message+",自定义状态码:"+res.state);
 						}
@@ -373,6 +389,55 @@
 					}
 				})
 			}
+			//获取地址信息
+			function getAddressByUid(uid){
+				//向服务器发送请求
+				$.ajax({
+					url: "/addresses",
+					type: "POST",
+					data: {
+						"uid":uid
+					},
+					dataType: "JSON",
+					success: function (res) {
+						if(res.state === 500){
+							//console.log(res.data);
+							let list = res.data;
+							//若地址栏不为空，则可支付
+							if(typeof(list)!=="undefined" || list!==null || list.length !== 0)IS_PAY=true;
+							//为下拉地址赋值
+							for (let i = 0; i < list.length; i++) {
+								let p = list[i].phone;
+								let info = list[i].name + "&nbsp;&nbsp;" + (list[i].tag === null?'无':list[i].tag) +
+										"&nbsp;&nbsp;" + list[i].provinceName + list[i].cityName + list[i].areaName+ list[i].address + "&nbsp;&nbsp;" +
+										p.replace(p.substring(3,7),"****")
+								if(i === 0){$("#address-list").append("<option value='"+list[i].aid+"' selected='selected'>"+info+"</option>");}
+								else{$("#address-list").append("<option value='"+list[i].aid+"'>"+info+"</option>");}
+							}
+
+
+						}else{
+							//则在下拉地址栏默认显示"请先前往"
+							$("#address-list").append("<option value='0'>---请先设置地址才可完成支付!---</option>")
+							console.log(res.message+",自定义状态码:"+res.state);
+						}
+
+					},
+					error: function (xhr) {
+						alert("系统异常!状态码:"+xhr.status);
+					}
+				})
+			}
+
+
+			//在线支付按钮
+			$("#btn-create-order").click(function () {
+				if(IS_PAY){
+					location.href = "payment.html";
+				}else {
+					alert("请先填写收货地址!");
+				}
+			})
 		</script>
 	</body>
 

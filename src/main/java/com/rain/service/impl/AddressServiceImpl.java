@@ -69,12 +69,15 @@ public class AddressServiceImpl implements IAddressService {
     @Override
     public List<Address> getByUid(Integer uid) {
         List<Address> list = addressMapper.findByUid(uid);
+        if(list.size() == 0 || list == null ){
+            throw new AddressNotFoundException("查询不到该用户的地址!",Code.SELECT_FAIL);
+        }
         //将不需要的值设置为空
         for(Address address : list){
             address.setProvinceCode(null);
             address.setCityCode(null);
             address.setAreaCode(null);
-            address.setTel(null);
+            //address.setTel(null);
             address.setCreatedUser(null);
             address.setCreatedTime(null);
             address.setModifiedTime(null);

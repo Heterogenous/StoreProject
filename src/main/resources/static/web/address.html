@@ -390,7 +390,7 @@
 				$("#address-list").empty();
 				$.ajax({
 					url: "/addresses",
-					type: "GET",
+					type: "POST",
 					dataType: "JSON",
 					success: function (res){
 						if(res.state === 500){
@@ -434,7 +434,7 @@
 							//第0个元素隐藏,隐藏问题:当分页的时候会出现每页的第一个都会隐藏
 							$(".add-def:eq(0)").hide();
 						}else{
-							alert("查询收货地址失败!");
+							console.log(res.message+",自定义状态码:"+res.state);
 						}
 					},
 					error: function (xhr) {
